@@ -23,6 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'delivery.access' => \App\Http\Middleware\DeliveryAccess::class,
             'reports.access' => \App\Http\Middleware\ReportsAccess::class,
             'check.registration.session' => \App\Http\Middleware\CheckRegistrationSession::class,
+            'handle.auth.errors' => \App\Http\Middleware\HandleAuthorizationErrors::class,
+            // 'log.order.access' => \App\Http\Middleware\LogOrderAccess::class, // Disabled until uploaded
         ]);
 
         // Apply middleware to groups
@@ -33,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\HandleAuthorizationErrors::class,
         ]);
 
         $middleware->group('api', [

@@ -12,7 +12,7 @@ class OrderPolicy
      */
     public function view(User $user, Order $order): bool
     {
-        // User can view their own orders
+        // User can view their own orders (including konsumen)
         if ($user->id === $order->user_id) {
             return true;
         }
@@ -24,11 +24,15 @@ class OrderPolicy
 
         // Producer can view orders containing their products
         if ($user->user_type === 'produsen') {
-            return $order->orderItems()
-                ->whereHas('product', function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
-                ->exists();
+            try {
+                return $order->orderItems()
+                    ->whereHas('product', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
+                    })
+                    ->exists();
+            } catch (\Exception $e) {
+                return false;
+            }
         }
 
         // Courier can view orders assigned to them

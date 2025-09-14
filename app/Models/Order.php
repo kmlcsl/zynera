@@ -192,4 +192,29 @@ class Order extends Model
     {
         return $this->subtotal > 0 ? ($this->service_fee / $this->subtotal) * 100 : 0;
     }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'id'; // Pastikan menggunakan ID sebagai route key
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Log ketika order di-load untuk debugging
+        static::retrieved(function ($order) {
+            \Illuminate\Support\Facades\Log::debug('Order retrieved', [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'user_id' => $order->user_id
+            ]);
+        });
+    }
 }
