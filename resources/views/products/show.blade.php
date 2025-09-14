@@ -1,0 +1,282 @@
+@extends('layouts.app')
+
+@section('title', $product->name)
+
+@section('content')
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Back Button -->
+        <div class="mb-6">
+            <a href="{{ route('products.index') }}"
+                class="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Kembali ke Daftar Produk
+            </a>
+        </div>
+
+        <!-- Product Detail -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <!-- Product Images -->
+            <div class="space-y-4">
+                @php
+                    $images = [];
+                    if ($product->images) {
+                        if (is_array($product->images)) {
+                            $images = $product->images;
+                        } elseif (is_string($product->images)) {
+                            $decoded = json_decode($product->images, true);
+                            $images = is_array($decoded) ? $decoded : [];
+                        }
+                    }
+                    $imageCount = is_array($images) ? count($images) : 0;
+                @endphp
+
+                <!-- Main Image -->
+                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    @if ($imageCount > 0)
+                        <img id="mainImage" src="{{ asset('storage/' . $images[0]) }}" alt="{{ $product->name }}"
+                            class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                            <i class="fas fa-image text-6xl"></i>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Thumbnail Images -->
+                @if ($imageCount > 1)
+                    <div class="grid grid-cols-4 gap-2">
+                        @foreach ($images as $index => $image)
+                            <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer border-2 hover:border-green-500 transition-colors"
+                                onclick="changeMainImage('{{ asset('storage/' . $image) }}', this)">
+                                <img src="{{ asset('storage/' . $image) }}" alt="{{ $product->name }}"
+                                    class="w-full h-full object-cover">
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <!-- Product Info -->
+            <div class="space-y-6">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">{{ $product->name }}</h1>
+                    <p class="text-gray-600">{{ $product->category->name }}</p>
+                    <p class="text-sm text-gray-500">Penjual: {{ $product->user->name }}</p>
+                </div>
+
+                <!-- Price -->
+                <div class="border-b pb-4">
+                    <p class="text-3xl font-bold text-green-600">
+                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                    </p>
+                </div>
+
+                <!-- Stock Info -->
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-600">Stok:</span>
+                    <span class="font-medium {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600' }}">
+                        {{ $product->stock > 0 ? $product->stock . ' tersedia' : 'Habis' }}
+                    </span>
+                </div>
+
+                <!-- Rating -->
+                @if ($product->reviews->count() > 0)
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i
+                                    class="fas fa-star text-sm {{ $i <= $product->average_rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                            @endfor
+                        </div>
+                        <span class="text-sm text-gray-600">
+                            {{ number_format($product->average_rating, 1) }} ({{ $product->reviews->count() }} review)
+                        </span>
+                    </div>
+                @endif
+
+                <!-- Description -->
+                <div>
+                    <h3 class="font-semibold mb-2">Deskripsi</h3>
+                    <p class="text-gray-700 leading-relaxed">{{ $product->description }}</p>
+                </div>
+
+                <!-- Add to Cart Form -->
+                @auth
+                    @if ($product->stock > 0)
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <label class="text-gray-600">Jumlah:</label>
+                                <div class="flex items-center border rounded-lg">
+                                    <button type="button" onclick="decreaseQuantity()"
+                                        class="px-3 py-2 text-gray-600 hover:bg-gray-100">-</button>
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                        max="{{ $product->stock }}" class="w-16 text-center border-0 focus:ring-0">
+                                    <button type="button" onclick="increaseQuantity({{ $product->stock }})"
+                                        class="px-3 py-2 text-gray-600 hover:bg-gray-100">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-3">
+                                <!-- Add to Cart Button -->
+                                <form action="{{ route('cart.add') }}" method="POST" class="flex-1">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="quantity" id="cart_quantity" value="1">
+                                    <button type="submit"
+                                        class="w-full bg-gray-100 text-gray-800 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium border">
+                                        <i class="fas fa-cart-plus mr-2"></i>
+                                        Tambah ke Keranjang
+                                    </button>
+                                </form>
+
+                                <!-- Buy Now Button -->
+                                <form action="{{ route('products.buy-now') }}" method="POST" class="flex-1">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="quantity" id="buy_quantity" value="1">
+                                    <button type="submit"
+                                        class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                                        <i class="fas fa-bolt mr-2"></i>
+                                        Beli Sekarang
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @else
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <p class="text-red-800 font-medium">Produk ini sedang tidak tersedia</p>
+                        </div>
+                    @endif
+                @else
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-blue-800">
+                            <a href="{{ route('login') }}" class="font-medium underline">Login</a>
+                            untuk menambahkan produk ke keranjang
+                        </p>
+                    </div>
+                @endauth
+            </div>
+        </div>
+
+        <!-- Product Reviews -->
+        @if ($product->reviews->count() > 0)
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4">Review Produk</h2>
+
+                <div class="space-y-4">
+                    @foreach ($product->reviews as $review)
+                        <div class="border-b pb-4 last:border-b-0">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-3">
+                                    <span class="font-medium">{{ $review->user->name }}</span>
+                                    <div class="flex items-center">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i
+                                                class="fas fa-star text-sm {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <span class="text-sm text-gray-500">{{ $review->created_at->format('d M Y') }}</span>
+                            </div>
+                            @if ($review->comment)
+                                <p class="text-gray-700">{{ $review->comment }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <!-- Related Products -->
+        @if ($relatedProducts->count() > 0)
+            <div>
+                <h2 class="text-2xl font-bold mb-6">Produk Serupa</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @foreach ($relatedProducts as $relatedProduct)
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                            <a href="{{ route('products.show', $relatedProduct->slug) }}">
+                                @php
+                                    $relatedImages = [];
+                                    if ($relatedProduct->images) {
+                                        if (is_array($relatedProduct->images)) {
+                                            $relatedImages = $relatedProduct->images;
+                                        } elseif (is_string($relatedProduct->images)) {
+                                            $decoded = json_decode($relatedProduct->images, true);
+                                            $relatedImages = is_array($decoded) ? $decoded : [];
+                                        }
+                                    }
+                                @endphp
+
+                                <div class="aspect-square bg-gray-200">
+                                    @if (count($relatedImages) > 0)
+                                        <img src="{{ asset('storage/' . $relatedImages[0]) }}"
+                                            alt="{{ $relatedProduct->name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                            <i class="fas fa-image text-2xl"></i>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="p-4">
+                                    <h3 class="font-semibold mb-1 line-clamp-2">{{ $relatedProduct->name }}</h3>
+                                    <p class="text-green-600 font-bold">
+                                        Rp {{ number_format($relatedProduct->price, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <script>
+        function changeMainImage(src, element) {
+            document.getElementById('mainImage').src = src;
+
+            // Remove active border from all thumbnails
+            document.querySelectorAll('.grid > div').forEach(div => {
+                div.classList.remove('border-green-500');
+                div.classList.add('border-transparent');
+            });
+
+            // Add active border to clicked thumbnail
+            element.classList.add('border-green-500');
+            element.classList.remove('border-transparent');
+        }
+
+        function increaseQuantity(maxStock) {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            if (currentValue < maxStock) {
+                const newValue = currentValue + 1;
+                quantityInput.value = newValue;
+                // Update hidden inputs for both forms
+                document.getElementById('cart_quantity').value = newValue;
+                document.getElementById('buy_quantity').value = newValue;
+            }
+        }
+
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                const newValue = currentValue - 1;
+                quantityInput.value = newValue;
+                // Update hidden inputs for both forms
+                document.getElementById('cart_quantity').value = newValue;
+                document.getElementById('buy_quantity').value = newValue;
+            }
+        }
+
+        // Update hidden inputs when quantity input changes manually
+        document.getElementById('quantity').addEventListener('input', function() {
+            const value = this.value;
+            document.getElementById('cart_quantity').value = value;
+            document.getElementById('buy_quantity').value = value;
+        });
+    </script>
+@endsection
