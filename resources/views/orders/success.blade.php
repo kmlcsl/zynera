@@ -145,6 +145,12 @@
                                         <span>Subtotal</span>
                                         <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                                     </div>
+                                    @if($order->service_fee > 0)
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>Biaya Layanan (2%)</span>
+                                        <span>Rp {{ number_format($order->service_fee, 0, ',', '.') }}</span>
+                                    </div>
+                                    @endif
                                     <div class="flex justify-between text-gray-600">
                                         <span>Ongkos Kirim</span>
                                         <span>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>

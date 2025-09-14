@@ -427,6 +427,12 @@
                                 <span class="text-gray-600">Subtotal ({{ $order->total_items }} item)</span>
                                 <span class="font-medium">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                             </div>
+                            @if($order->service_fee > 0)
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Biaya Layanan (2%)</span>
+                                <span class="font-medium">Rp {{ number_format($order->service_fee, 0, ',', '.') }}</span>
+                            </div>
+                            @endif
                             <div class="flex justify-between items-center py-2 border-b border-gray-100">
                                 <span class="text-gray-600">Biaya Pengiriman</span>
                                 <span class="font-medium">Rp

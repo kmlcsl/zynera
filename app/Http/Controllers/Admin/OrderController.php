@@ -231,7 +231,7 @@ class OrderController extends Controller
         ]);
 
         // Recalculate total if shipping cost changed
-        $order->total_amount = $order->subtotal + $order->shipping_cost;
+        $order->total_amount = $order->subtotal + $order->service_fee + $order->shipping_cost;
         $order->save();
 
         return redirect()->route('admin.orders.show', $order)

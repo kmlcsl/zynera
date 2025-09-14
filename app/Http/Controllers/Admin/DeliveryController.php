@@ -20,6 +20,8 @@ class DeliveryController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Delivery::class);
+
         $user = Auth::user();
         $userType = $user->user_type;
 
@@ -35,8 +37,10 @@ class DeliveryController extends Controller
         $stats = $this->getDeliveryStats($userType, $user->id);
 
         $couriers = [];
-        if ($userType === 'admin') {
-            $couriers = User::where('user_type', 'kurir')->select('id', 'name')->get();
+        if (in_array($userType, ['admin', 'produsen'])) {
+            $couriers = User::where('user_type', 'kurir')
+                ->where('is_verified', true)
+                ->select('id', 'name')->get();
         }
 
         return view('admin.deliveries.index', compact('deliveries', 'stats', 'couriers'));
@@ -360,6 +364,13 @@ class DeliveryController extends Controller
                 $query->where('courier_id', $userId);
                 break;
 
+            case 'produsen':
+                // Producer can see deliveries for orders containing their products
+                $query->whereHas('order.orderItems.product', function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                });
+                break;
+
             default:
                 // For other user types, return empty query
                 $query->whereRaw('1 = 0');
@@ -390,8 +401,8 @@ class DeliveryController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Courier filter (admin only)
-        if ($request->filled('courier_id') && Auth::user()->user_type === 'admin') {
+        // Courier filter (admin and produsen)
+        if ($request->filled('courier_id') && in_array(Auth::user()->user_type, ['admin', 'produsen'])) {
             $query->where('courier_id', $request->courier_id);
         }
 

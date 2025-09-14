@@ -65,9 +65,10 @@ class OrderController extends Controller
         });
 
         $shippingCost = 5000;
-        $total = $subtotal + $shippingCost;
+        $serviceFee = $subtotal * 0.02; // 2% service fee on subtotal only
+        $total = $subtotal + $serviceFee + $shippingCost;
 
-        return view('orders.checkout', compact('carts', 'subtotal', 'shippingCost', 'total'));
+        return view('orders.checkout', compact('carts', 'subtotal', 'serviceFee', 'shippingCost', 'total'));
     }
 
     /**
@@ -114,7 +115,8 @@ class OrderController extends Controller
             });
 
             $shippingCost = 5000;
-            $totalAmount = $subtotal + $shippingCost;
+            $serviceFee = $subtotal * 0.02; // 2% service fee on subtotal only
+            $totalAmount = $subtotal + $serviceFee + $shippingCost;
             $totalItems = $carts->sum('quantity');
 
             // Create order
@@ -123,6 +125,7 @@ class OrderController extends Controller
                 'user_id' => Auth::id(),
                 'total_amount' => $totalAmount,
                 'subtotal' => $subtotal,
+                'service_fee' => $serviceFee,
                 'shipping_cost' => $shippingCost,
                 'total_items' => $totalItems,
                 'recipient_name' => $request->recipient_name,

@@ -11,11 +11,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProductController extends Controller
 {
+    use AuthorizesRequests;
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Product::class);
+        
         $query = Product::with(['category', 'user']);
 
         if (Auth::user()->user_type === 'produsen') {
@@ -61,6 +65,7 @@ class ProductController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Product::class);
         $categories = Category::where('is_active', true)->get();
 
         if (Auth::user()->user_type === 'admin') {
@@ -83,6 +88,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create', Product::class);
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -126,9 +132,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        if (Auth::user()->user_type === 'produsen' && $product->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki akses ke produk ini.');
-        }
+        $this->authorize('view', $product);
 
         $product->load(['category', 'user', 'reviews.user']);
 
@@ -137,9 +141,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        if (Auth::user()->user_type === 'produsen' && $product->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki akses ke produk ini.');
-        }
+        $this->authorize('update', $product);
 
         $categories = Category::where('is_active', true)->get();
 
@@ -162,9 +164,7 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        if (Auth::user()->user_type === 'produsen' && $product->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki akses ke produk ini.');
-        }
+        $this->authorize('update', $product);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -218,9 +218,7 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if (Auth::user()->user_type === 'produsen' && $product->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki akses ke produk ini.');
-        }
+        $this->authorize('delete', $product);
 
         // Delete images
         if ($product->images) {

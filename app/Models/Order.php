@@ -14,6 +14,7 @@ class Order extends Model
         'user_id',
         'total_amount',
         'subtotal',
+        'service_fee',
         'shipping_cost',
         'total_items',
         'status',
@@ -25,6 +26,8 @@ class Order extends Model
 
     protected $casts = [
         'total_amount' => 'float',
+        'subtotal' => 'float',
+        'service_fee' => 'float',
         'shipping_cost' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -175,13 +178,18 @@ class Order extends Model
         return $this->orderItems->sum('quantity');
     }
 
-    public function getSubtotalAttribute()
+    public function getCalculatedSubtotalAttribute()
     {
         return $this->orderItems->sum('total');
     }
 
     public function getFinalTotalAttribute()
     {
-        return $this->total_amount + $this->shipping_cost;
+        return $this->subtotal + $this->service_fee + $this->shipping_cost;
+    }
+
+    public function getServiceFeePercentageAttribute()
+    {
+        return $this->subtotal > 0 ? ($this->service_fee / $this->subtotal) * 100 : 0;
     }
 }

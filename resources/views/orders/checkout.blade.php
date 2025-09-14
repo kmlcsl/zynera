@@ -176,6 +176,10 @@
                                 <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
+                                <span>Biaya Layanan (2%)</span>
+                                <span>Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
                                 <span>Ongkos Kirim</span>
                                 <span>Rp {{ number_format($shippingCost, 0, ',', '.') }}</span>
                             </div>

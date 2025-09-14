@@ -12,7 +12,7 @@ class DeliveryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->user_type, ['admin', 'kurir']);
+        return in_array($user->user_type, ['admin', 'kurir', 'produsen']);
     }
 
     /**
@@ -27,6 +27,14 @@ class DeliveryPolicy
             case 'kurir':
                 // Courier can view their assigned deliveries
                 return $delivery->courier_id === $user->id;
+            
+            case 'produsen':
+                // Producer can view deliveries for orders containing their products
+                return $delivery->order->orderItems()
+                    ->whereHas('product', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
+                    })
+                    ->exists();
 
             default:
                 return false;
@@ -38,7 +46,7 @@ class DeliveryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->user_type === 'admin';
+        return in_array($user->user_type, ['admin', 'produsen']);
     }
 
     /**
@@ -54,6 +62,14 @@ class DeliveryPolicy
                 // Courier can update their assigned deliveries
                 return $delivery->courier_id === $user->id &&
                     !in_array($delivery->status, [Delivery::STATUS_DELIVERED, Delivery::STATUS_FAILED]);
+            
+            case 'produsen':
+                // Producer can update deliveries for orders containing their products (limited actions)
+                return $delivery->order->orderItems()
+                    ->whereHas('product', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
+                    })
+                    ->exists();
 
             default:
                 return false;
