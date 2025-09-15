@@ -28,9 +28,6 @@ use App\Http\Controllers\Admin\Reports\SystemController as AdminReportsSystemCon
 use App\Http\Controllers\Admin\Reports\DashboardController as AdminReportsDashboardController;
 use App\Http\Controllers\Admin\Reports\BulkController as AdminReportsBulkController;
 
-// TAMBAHAN IMPORT UNTUK MODEL YANG DIGUNAKAN DI CLOSURE
-use App\Models\Order;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -59,9 +56,7 @@ Route::prefix('categories')->name('categories.')->group(function () {
 });
 
 Route::post('/products/buy-now', [ProductController::class, 'buyNow'])->name('products.buy-now');
-
 Route::get('/get-stats', [HomeController::class, 'getStats'])->name('home.stats');
-
 Route::get('/demo', function () {
     return view('demo');
 })->name('demo');
@@ -107,69 +102,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::patch('/cart/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
-    Route::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count')->middleware('auth');
+    Route::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count');
 
     Route::post('/products/buy-now', [ProductController::class, 'buyNow'])->name('products.buy-now');
 
-    // DEBUG ROUTES - Tambahkan di bagian paling atas sebelum order routes
-    Route::get('/debug/current-user', function() {
-        return response()->json([
-            'authenticated' => Auth::check(),
-            'user_id' => Auth::id(),
-            'user_type' => Auth::check() ? Auth::user()->user_type : null,
-            'user_email' => Auth::check() ? Auth::user()->email : null,
-            'session_id' => session()->getId()
-        ]);
-    })->name('debug.current-user');
-
-    Route::get('/debug/orders/{order}', function (Order $order) {
-        // FIXED: Convert to int for proper comparison
-        $orderUserId = (int) $order->user_id;
-        $currentUserId = (int) Auth::id();
-
-        return response()->json([
-            'order_id' => $order->id,
-            'order_number' => $order->order_number,
-            'user_id' => $order->user_id,
-            'user_id_type' => gettype($order->user_id),
-            'current_user_id' => Auth::id(),
-            'current_user_id_type' => gettype(Auth::id()),
-            'user_id_int' => $orderUserId,
-            'current_user_id_int' => $currentUserId,
-            'can_access' => $orderUserId === $currentUserId,
-            'user_type' => Auth::user()->user_type ?? 'unknown',
-            'matches' => $orderUserId === $currentUserId ? 'YES' : 'NO',
-            'message' => $orderUserId === $currentUserId ? 'ACCESS SHOULD BE GRANTED' : 'ACCESS DENIED',
-            'strict_comparison' => $order->user_id === Auth::id() ? 'TRUE' : 'FALSE (TYPE MISMATCH)',
-            'loose_comparison' => $order->user_id == Auth::id() ? 'TRUE' : 'FALSE'
-        ]);
-    })->name('debug.order');
-
-    // Order routes - Urutan sangat penting
+    // Order routes
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/tracking', [OrderController::class, 'tracking'])->name('orders.tracking');
-
-    // DEBUG ORDER ROUTES - Letakkan sebelum routes dengan parameter
-    Route::get('/orders/{order}/debug-auth', [OrderController::class, 'debugAuth'])->name('orders.debug-auth');
-    Route::get('/orders/{order}/test-success', [OrderController::class, 'testSuccess'])->name('orders.test-success');
-
-    // Route alternatif untuk testing tanpa policy
-    Route::get('/orders/{order}/success-direct', function (Order $order) {
-        // FIXED: Convert to int for proper comparison
-        $orderUserId = (int) $order->user_id;
-        $currentUserId = (int) Auth::id();
-
-        if ($orderUserId !== $currentUserId && (Auth::user()->user_type ?? '') !== 'admin') {
-            return redirect()->route('orders.index')->with('error', 'Access denied');
-        }
-
-        $order->load(['orderItems.product', 'payment', 'user']);
-        return view('orders.success', compact('order'));
-    })->name('orders.success-direct');
-
-    // Routes dengan parameter {order} - PENTING: Letakkan paling bawah
     Route::get('/orders/{order}/success', [OrderController::class, 'success'])->name('orders.success');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
@@ -200,7 +141,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         // Dashboard - Accessible by all admin panel users
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
         Route::get('/products/villages-by-district', [AdminProductController::class, 'getVillagesByDistrict'])->name('products.villages-by-district');
 
         // =================================================================
@@ -284,7 +224,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         });
 
         // =================================================================
-        // DELIVERY MANAGEMENT - Admin & Kurir
+        // DELIVERY MANAGEMENT - Admin & Kurir & Produsen
         // =================================================================
         Route::middleware(['delivery.access'])->group(function () {
             Route::resource('deliveries', AdminDeliveryController::class);

@@ -24,7 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'reports.access' => \App\Http\Middleware\ReportsAccess::class,
             'check.registration.session' => \App\Http\Middleware\CheckRegistrationSession::class,
             'handle.auth.errors' => \App\Http\Middleware\HandleAuthorizationErrors::class,
-            // 'log.order.access' => \App\Http\Middleware\LogOrderAccess::class, // Disabled until uploaded
         ]);
 
         // Apply middleware to groups
@@ -40,12 +39,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->group('api', [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            'throttle:api', // Gunakan string alias, bukan method
+            'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
-
-        // Apply throttling to specific routes in route files
-        // Throttling dikonfigurasi langsung di routes, bukan di bootstrap
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

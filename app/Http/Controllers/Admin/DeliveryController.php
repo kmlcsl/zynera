@@ -8,19 +8,20 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DeliveryController extends Controller
 {
-    use AuthorizesRequests;
-
     /**
      * Display a listing of deliveries based on user type
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Delivery::class);
+        // MANUAL AUTHORIZATION CHECK instead of using policy
+        if (!$this->canAccessDeliveries()) {
+            abort(403, 'You do not have permission to access delivery management');
+        }
 
         $user = Auth::user();
         $userType = $user->user_type;
@@ -51,7 +52,9 @@ class DeliveryController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Delivery::class);
+        if (!$this->canCreateDelivery()) {
+            abort(403, 'You do not have permission to create deliveries');
+        }
 
         $orders = Order::where('status', Order::STATUS_SHIPPED)
             ->whereDoesntHave('delivery')
@@ -68,7 +71,9 @@ class DeliveryController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Delivery::class);
+        if (!$this->canCreateDelivery()) {
+            abort(403, 'You do not have permission to create deliveries');
+        }
 
         $request->validate([
             'order_id' => 'required|exists:orders,id',
@@ -114,7 +119,9 @@ class DeliveryController extends Controller
      */
     public function show(Delivery $delivery)
     {
-        $this->authorize('view', $delivery);
+        if (!$this->canViewDelivery($delivery)) {
+            abort(403, 'You do not have permission to view this delivery');
+        }
 
         $delivery->load([
             'order.user',
@@ -130,7 +137,9 @@ class DeliveryController extends Controller
      */
     public function edit(Delivery $delivery)
     {
-        $this->authorize('update', $delivery);
+        if (!$this->canUpdateDelivery($delivery)) {
+            abort(403, 'You do not have permission to edit this delivery');
+        }
 
         // Only allow editing of active deliveries
         if (in_array($delivery->status, [Delivery::STATUS_DELIVERED, Delivery::STATUS_FAILED])) {
@@ -148,7 +157,9 @@ class DeliveryController extends Controller
      */
     public function update(Request $request, Delivery $delivery)
     {
-        $this->authorize('update', $delivery);
+        if (!$this->canUpdateDelivery($delivery)) {
+            abort(403, 'You do not have permission to update this delivery');
+        }
 
         // Only allow updating of active deliveries
         if (in_array($delivery->status, [Delivery::STATUS_DELIVERED, Delivery::STATUS_FAILED])) {
@@ -196,7 +207,12 @@ class DeliveryController extends Controller
      */
     public function destroy(Delivery $delivery)
     {
-        $this->authorize('delete', $delivery);
+        if (!$this->canDeleteDelivery($delivery)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to delete this delivery'
+            ]);
+        }
 
         // Only allow deletion of failed deliveries
         if ($delivery->status !== Delivery::STATUS_FAILED) {
@@ -219,7 +235,12 @@ class DeliveryController extends Controller
      */
     public function updateStatus(Request $request, Delivery $delivery)
     {
-        $this->authorize('update', $delivery);
+        if (!$this->canUpdateDelivery($delivery)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to update this delivery'
+            ]);
+        }
 
         $request->validate([
             'status' => ['required', Rule::in([
@@ -256,7 +277,12 @@ class DeliveryController extends Controller
      */
     public function assignCourier(Request $request, Delivery $delivery)
     {
-        $this->authorize('update', $delivery);
+        if (!$this->canUpdateDelivery($delivery)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to update this delivery'
+            ]);
+        }
 
         $request->validate([
             'courier_id' => 'required|exists:users,id'
@@ -273,14 +299,24 @@ class DeliveryController extends Controller
             ]);
         }
 
+        // PERBAIKAN: Pastikan status dan timestamp di-update dengan benar
         $delivery->update([
             'courier_id' => $request->courier_id,
+            'assigned_by' => Auth::id(), // Track who assigned
+            'status' => Delivery::STATUS_ASSIGNED, // Pastikan status assigned
             'assigned_at' => now()
         ]);
 
+        // TAMBAHAN: Log untuk debugging
+        Log::info("Delivery {$delivery->id} assigned to courier {$courier->name} (ID: {$courier->id})");
+
         return response()->json([
             'success' => true,
-            'message' => "Pengiriman berhasil ditugaskan ke {$courier->name}"
+            'message' => "Pengiriman berhasil ditugaskan ke {$courier->name}",
+            'courier' => [
+                'id' => $courier->id,
+                'name' => $courier->name
+            ]
         ]);
     }
 
@@ -289,7 +325,12 @@ class DeliveryController extends Controller
      */
     public function bulkAssignCourier(Request $request)
     {
-        $this->authorize('create', Delivery::class);
+        if (!$this->canCreateDelivery()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to assign couriers'
+            ]);
+        }
 
         $request->validate([
             'delivery_ids' => 'required|array',
@@ -309,17 +350,22 @@ class DeliveryController extends Controller
         }
 
         $deliveryIds = $request->delivery_ids;
-        $deliveries = Delivery::whereIn('id', $deliveryIds)->get();
+        $deliveries = Delivery::whereIn('id', $deliveryIds)
+            ->whereNull('courier_id') // Hanya yang belum di-assign
+            ->get();
 
         $updatedCount = 0;
         foreach ($deliveries as $delivery) {
-            if ($delivery->status === Delivery::STATUS_ASSIGNED) {
-                $delivery->update([
-                    'courier_id' => $request->courier_id,
-                    'assigned_at' => now()
-                ]);
-                $updatedCount++;
-            }
+            $delivery->update([
+                'courier_id' => $request->courier_id,
+                'assigned_by' => Auth::id(),
+                'status' => Delivery::STATUS_ASSIGNED, // Pastikan status assigned
+                'assigned_at' => now()
+            ]);
+            $updatedCount++;
+
+            // Log untuk debugging
+            Log::info("Bulk assign: Delivery {$delivery->id} assigned to courier {$courier->name}");
         }
 
         return response()->json([
@@ -333,7 +379,12 @@ class DeliveryController extends Controller
      */
     public function markAsFailed(Request $request, Delivery $delivery)
     {
-        $this->authorize('update', $delivery);
+        if (!$this->canUpdateDelivery($delivery)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to update this delivery'
+            ]);
+        }
 
         $request->validate([
             'notes' => 'required|string|max:1000'
@@ -346,6 +397,107 @@ class DeliveryController extends Controller
             'message' => 'Pengiriman berhasil ditandai sebagai gagal'
         ]);
     }
+
+    // ========================================
+    // MANUAL AUTHORIZATION METHODS
+    // ========================================
+
+    /**
+     * Check if user can access deliveries
+     */
+    private function canAccessDeliveries()
+    {
+        $user = Auth::user();
+        return $user && in_array($user->user_type, ['admin', 'kurir', 'produsen']);
+    }
+
+    /**
+     * Check if user can create delivery
+     */
+    private function canCreateDelivery()
+    {
+        $user = Auth::user();
+        return $user && in_array($user->user_type, ['admin', 'produsen']);
+    }
+
+    /**
+     * Check if user can view delivery
+     */
+    private function canViewDelivery(Delivery $delivery)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        switch ($user->user_type) {
+            case 'admin':
+                return true;
+
+            case 'kurir':
+                // Courier can view their assigned deliveries
+                return (int) $delivery->courier_id === (int) $user->id;
+
+            case 'produsen':
+                // Producer can view deliveries for orders containing their products
+                return $delivery->order->orderItems()
+                    ->whereHas('product', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
+                    })
+                    ->exists();
+
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check if user can update delivery
+     */
+    private function canUpdateDelivery(Delivery $delivery)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        switch ($user->user_type) {
+            case 'admin':
+                return true;
+
+            case 'kurir':
+                // Courier can update their assigned deliveries
+                return (int) $delivery->courier_id === (int) $user->id &&
+                    !in_array($delivery->status, [Delivery::STATUS_DELIVERED, Delivery::STATUS_FAILED]);
+
+            case 'produsen':
+                // Producer can update deliveries for orders containing their products (limited actions)
+                return $delivery->order->orderItems()
+                    ->whereHas('product', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
+                    })
+                    ->exists();
+
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check if user can delete delivery
+     */
+    private function canDeleteDelivery(Delivery $delivery)
+    {
+        $user = Auth::user();
+        // Only admin can delete failed deliveries
+        return $user && $user->user_type === 'admin' && $delivery->status === Delivery::STATUS_FAILED;
+    }
+
+    // ========================================
+    // HELPER METHODS (unchanged)
+    // ========================================
 
     /**
      * Get deliveries query based on user type

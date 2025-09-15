@@ -16,17 +16,17 @@ class DeliveryAccess
     {
         $user = Auth::user();
 
+        // Check if user is authenticated
         if (!$user) {
             return redirect()->route('login');
         }
 
-        // Allow admin and kurir to access delivery features
-        if (in_array($user->user_type, ['admin', 'kurir'])) {
+        // Allow access for admin, kurir, and produsen
+        if (in_array($user->user_type, ['admin', 'kurir', 'produsen'])) {
             return $next($request);
         }
 
-        // Redirect other user types to dashboard
-        return redirect()->route('admin.dashboard')
-            ->with('error', 'Anda tidak memiliki akses ke halaman pengiriman.');
+        // Deny access for other user types (konsumen, etc.)
+        abort(403, 'Access denied to delivery management');
     }
 }

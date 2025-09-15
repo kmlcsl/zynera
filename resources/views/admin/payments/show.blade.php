@@ -20,13 +20,13 @@
             </button>
         @endif
 
-        @if ($payment->status === 'paid')
+        {{-- @if ($payment->status === 'paid')
             <a href="{{ route('admin.payments.receipt', $payment) }}" target="_blank"
                 class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-blue-700">
                 <i class="fas fa-print mr-2"></i>
                 Cetak Kwitansi
             </a>
-        @endif
+        @endif --}}
 
         <a href="{{ route('admin.payments.index') }}"
             class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-gray-700">
