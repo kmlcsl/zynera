@@ -19,7 +19,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Product::class);
-        
+
         $query = Product::with(['category', 'user']);
 
         if (Auth::user()->user_type === 'produsen') {
@@ -75,15 +75,15 @@ class ProductController extends Controller
         }
 
         // Get districts for Aceh Barat
-        // $districts = Region::kecamatan()
-        //     ->whereHas('parent', function ($q) {
-        //         $q->where('name', 'Aceh Barat');
-        //     })
-        //     ->active()
-        //     ->orderBy('name')
-        //     ->get();
+        $districts = Region::kecamatan()
+            ->whereHas('parent', function ($q) {
+                $q->where('name', 'Aceh Barat');
+            })
+            ->active()
+            ->orderBy('name')
+            ->get();
 
-        return view('admin.products.create', compact('categories', 'producers'));
+        return view('admin.products.create', compact('categories', 'producers', 'districts'));
     }
 
     public function store(Request $request)
@@ -151,15 +151,15 @@ class ProductController extends Controller
             $producers = collect([Auth::user()]);
         }
 
-        // $districts = Region::kecamatan()
-        //     ->whereHas('parent', function ($q) {
-        //         $q->where('name', 'Aceh Barat');
-        //     })
-        //     ->active()
-        //     ->orderBy('name')
-        //     ->get();
+        $districts = Region::kecamatan()
+            ->whereHas('parent', function ($q) {
+                $q->where('name', 'Aceh Barat');
+            })
+            ->active()
+            ->orderBy('name')
+            ->get();
 
-        return view('admin.products.edit', compact('product', 'categories', 'producers'));
+        return view('admin.products.edit', compact('product', 'categories', 'producers', 'districts'));
     }
 
     public function update(Request $request, Product $product)
