@@ -74,6 +74,12 @@ class DashboardController extends Controller
                     'total_revenue' => Order::where('status', 'delivered')->sum('total_amount'),
                     'pending_orders' => Order::where('status', 'pending')->count(),
                     'active_products' => Product::where('is_active', true)->count(),
+                    // User role statistics
+                    'total_customers' => User::where('user_type', 'konsumen')->count(),
+                    'total_producers' => User::where('user_type', 'produsen')->count(),
+                    'total_couriers' => User::where('user_type', 'kurir')->count(),
+                    'total_admins' => User::where('user_type', 'admin')->count(),
+                    // Legacy fields for backward compatibility
                     'producers' => User::where('user_type', 'produsen')->count(),
                     'couriers' => User::where('user_type', 'kurir')->count()
                 ];

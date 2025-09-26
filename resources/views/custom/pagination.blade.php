@@ -1,14 +1,6 @@
 @if ($paginator->hasPages())
-    <nav class="flex items-center justify-between bg-white rounded-xl shadow-md border border-emerald-100 p-4" aria-label="Pagination Navigation">
-        {{-- Mobile Pagination Info --}}
-        <div class="flex justify-between flex-1 sm:hidden">
-            <div class="text-xs text-slate-600">
-                Halaman {{ $paginator->currentPage() }} dari {{ $paginator->lastPage() }}
-            </div>
-            <div class="text-xs text-slate-600">
-                {{ number_format($paginator->total()) }} total produk
-            </div>
-        </div>
+    <nav class="flex flex-col bg-white rounded-xl shadow-md border border-emerald-100 p-3 sm:p-4" aria-label="Pagination Navigation">
+
 
         {{-- Desktop Pagination --}}
         <div class="hidden sm:flex sm:items-center sm:justify-between w-full">
@@ -86,7 +78,7 @@
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
-                    </span>
+                    </a>
                 @endif
             </div>
 
@@ -100,11 +92,8 @@
                                max="{{ $paginator->lastPage() }}"
                                value="{{ $paginator->currentPage() }}"
                                class="w-10 px-1 py-0.5 text-center text-xs border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
-                               onchange="if(this.value >= 1 && this.value <= {{ $paginator->lastPage() }}) {
-                                   const url = new URL(window.location);
-                                   url.searchParams.set('page', this.value);
-                                   window.location.href = url.toString();
-                               }">
+                               onchange="jumpToPage(this.value, {{ $paginator->lastPage() }})"
+                               onkeypress="if(event.key === 'Enter') { jumpToPage(this.value, {{ $paginator->lastPage() }}); this.blur(); }">
                         <span class="ml-1 text-slate-500 text-xs">/ {{ $paginator->lastPage() }}</span>
                     </div>
                 </div>
@@ -114,37 +103,60 @@
             </div>
         </div>
 
+        <script>
+        function jumpToPage(page, maxPage) {
+            const pageNum = parseInt(page);
+            if (pageNum >= 1 && pageNum <= maxPage) {
+                const url = new URL(window.location);
+                url.searchParams.set('page', pageNum);
+                window.location.href = url.toString();
+            }
+        }
+        </script>
+
         {{-- Mobile Pagination Controls --}}
-        <div class="flex sm:hidden justify-between w-full mt-3">
+        <div class="flex sm:hidden justify-center gap-2 w-full">
             @if ($paginator->onFirstPage())
-                <span class="flex items-center justify-center px-3 py-2 text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed text-sm">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="flex items-center justify-center px-3 py-2 text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed text-sm min-w-0 flex-1 max-w-[100px]">
+                    <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
-                    Sebelumnya
+                    <span class="truncate">Sebelumnya</span>
                 </span>
             @else
                 <a href="{{ $paginator->previousPageUrl() }}"
-                   class="flex items-center justify-center px-3 py-2 text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-sm text-sm">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="flex items-center justify-center px-3 py-2 text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-sm text-sm min-w-0 flex-1 max-w-[100px]">
+                    <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
-                    Sebelumnya
+                    <span class="truncate">Sebelumnya</span>
                 </a>
             @endif
 
+            {{-- Mobile Page Jump --}}
+            <div class="flex items-center justify-center bg-slate-50 rounded-lg px-2 py-2 border min-w-[60px]">
+                <input type="number"
+                       min="1"
+                       max="{{ $paginator->lastPage() }}"
+                       value="{{ $paginator->currentPage() }}"
+                       class="w-6 text-center text-sm border-0 bg-transparent focus:ring-0 p-0 font-medium"
+                       onchange="jumpToPage(this.value, {{ $paginator->lastPage() }})"
+                       onkeypress="if(event.key === 'Enter') { jumpToPage(this.value, {{ $paginator->lastPage() }}); this.blur(); }">
+                <span class="text-slate-500 text-sm font-medium">/{{ $paginator->lastPage() }}</span>
+            </div>
+
             @if ($paginator->hasMorePages())
                 <a href="{{ $paginator->nextPageUrl() }}"
-                   class="flex items-center justify-center px-3 py-2 text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-sm text-sm">
-                    Selanjutnya
-                    <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="flex items-center justify-center px-3 py-2 text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-sm text-sm min-w-0 flex-1 max-w-[100px]">
+                    <span class="truncate">Selanjutnya</span>
+                    <svg class="w-3 h-3 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                 </a>
             @else
-                <span class="flex items-center justify-center px-3 py-2 text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed text-sm">
-                    Selanjutnya
-                    <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="flex items-center justify-center px-3 py-2 text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed text-sm min-w-0 flex-1 max-w-[100px]">
+                    <span class="truncate">Selanjutnya</span>
+                    <svg class="w-3 h-3 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                 </span>

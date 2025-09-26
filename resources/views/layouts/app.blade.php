@@ -28,6 +28,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Custom Styles -->
+    @stack('styles')
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -622,6 +625,9 @@
             });
         });
     </script>
+
+    <!-- Page-specific Scripts -->
+    @stack('scripts')
 </body>
 
 </html>

@@ -79,20 +79,30 @@
                     </span>
                 </div>
 
-                <!-- Rating -->
-                @if ($product->reviews->count() > 0)
-                    <div class="flex items-center gap-2">
-                        <div class="flex items-center">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <i
-                                    class="fas fa-star text-sm {{ $i <= $product->average_rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
-                            @endfor
-                        </div>
-                        <span class="text-sm text-gray-600">
-                            {{ number_format($product->average_rating, 1) }} ({{ $product->reviews->count() }} review)
-                        </span>
+                <!-- Rating and Share -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        @if ($product->reviews->count() > 0)
+                            <div class="flex items-center gap-2">
+                                <div class="flex items-center">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star text-sm {{ $i <= $product->average_rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                    @endfor
+                                </div>
+                                <span class="text-sm text-gray-600">
+                                    {{ number_format($product->average_rating, 1) }} ({{ $product->reviews->count() }} review)
+                                </span>
+                            </div>
+                        @endif
                     </div>
-                @endif
+
+                    <!-- Share Button -->
+                    <button onclick="openShareModal()"
+                        class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-share-alt"></i>
+                        <span>Bagikan</span>
+                    </button>
+                </div>
 
                 <!-- Description -->
                 <div>
@@ -163,7 +173,6 @@
         @if ($product->reviews->count() > 0)
             <div class="bg-white rounded-lg shadow-md p-6 mb-8">
                 <h2 class="text-xl font-bold mb-4">Review Produk</h2>
-
                 <div class="space-y-4">
                     @foreach ($product->reviews as $review)
                         <div class="border-b pb-4 last:border-b-0">
@@ -172,8 +181,7 @@
                                     <span class="font-medium">{{ $review->user->name }}</span>
                                     <div class="flex items-center">
                                         @for ($i = 1; $i <= 5; $i++)
-                                            <i
-                                                class="fas fa-star text-sm {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                            <i class="fas fa-star text-sm {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
                                         @endfor
                                     </div>
                                 </div>
@@ -231,52 +239,157 @@
                 </div>
             </div>
         @endif
-    </div>
 
-    <script>
-        function changeMainImage(src, element) {
-            document.getElementById('mainImage').src = src;
+        <!-- Share Modal -->
+        <div id="shareModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+            <div class="flex items-center justify-center min-h-screen px-4">
+                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">Bagikan Produk</h3>
+                        <button onclick="closeShareModal()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
 
-            // Remove active border from all thumbnails
-            document.querySelectorAll('.grid > div').forEach(div => {
-                div.classList.remove('border-green-500');
-                div.classList.add('border-transparent');
-            });
+                    <div class="space-y-3">
+                        <!-- WhatsApp Share -->
+                        <button onclick="shareToWhatsApp()"
+                            class="w-full flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fab fa-whatsapp text-white"></i>
+                            </div>
+                            <span>Bagikan ke WhatsApp</span>
+                        </button>
 
-            // Add active border to clicked thumbnail
-            element.classList.add('border-green-500');
-            element.classList.remove('border-transparent');
-        }
+                        <!-- Instagram Share -->
+                        <button onclick="shareToInstagram()"
+                            class="w-full flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                <i class="fab fa-instagram text-white"></i>
+                            </div>
+                            <span>Bagikan ke Instagram</span>
+                        </button>
 
-        function increaseQuantity(maxStock) {
-            const quantityInput = document.getElementById('quantity');
-            const currentValue = parseInt(quantityInput.value);
-            if (currentValue < maxStock) {
-                const newValue = currentValue + 1;
-                quantityInput.value = newValue;
-                // Update hidden inputs for both forms
-                document.getElementById('cart_quantity').value = newValue;
-                document.getElementById('buy_quantity').value = newValue;
-            }
-        }
-
-        function decreaseQuantity() {
-            const quantityInput = document.getElementById('quantity');
-            const currentValue = parseInt(quantityInput.value);
-            if (currentValue > 1) {
-                const newValue = currentValue - 1;
-                quantityInput.value = newValue;
-                // Update hidden inputs for both forms
-                document.getElementById('cart_quantity').value = newValue;
-                document.getElementById('buy_quantity').value = newValue;
-            }
-        }
-
-        // Update hidden inputs when quantity input changes manually
-        document.getElementById('quantity').addEventListener('input', function() {
-            const value = this.value;
-            document.getElementById('cart_quantity').value = value;
-            document.getElementById('buy_quantity').value = value;
-        });
-    </script>
+                        <!-- Copy Link -->
+                        <button onclick="copyProductLink()"
+                            class="w-full flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-link text-white"></i>
+                            </div>
+                            <span id="copyLinkText">Salin Link</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection
+
+@push('scripts')
+<script>
+    function changeMainImage(src, element) {
+        document.getElementById('mainImage').src = src;
+
+        // Remove active border from all thumbnails
+        document.querySelectorAll('.grid > div').forEach(div => {
+            div.classList.remove('border-green-500');
+            div.classList.add('border-transparent');
+        });
+
+        // Add active border to clicked thumbnail
+        element.classList.add('border-green-500');
+        element.classList.remove('border-transparent');
+    }
+
+    function increaseQuantity(maxStock) {
+        const quantityInput = document.getElementById('quantity');
+        const currentValue = parseInt(quantityInput.value);
+        if (currentValue < maxStock) {
+            const newValue = currentValue + 1;
+            quantityInput.value = newValue;
+            document.getElementById('cart_quantity').value = newValue;
+            document.getElementById('buy_quantity').value = newValue;
+        }
+    }
+
+    function decreaseQuantity() {
+        const quantityInput = document.getElementById('quantity');
+        const currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            const newValue = currentValue - 1;
+            quantityInput.value = newValue;
+            document.getElementById('cart_quantity').value = newValue;
+            document.getElementById('buy_quantity').value = newValue;
+        }
+    }
+
+    // Update hidden inputs when quantity input changes manually
+    document.getElementById('quantity').addEventListener('input', function() {
+        const value = this.value;
+        document.getElementById('cart_quantity').value = value;
+        document.getElementById('buy_quantity').value = value;
+    });
+
+    // Share Modal Functions
+    function openShareModal() {
+        document.getElementById('shareModal').classList.remove('hidden');
+    }
+
+    function closeShareModal() {
+        document.getElementById('shareModal').classList.add('hidden');
+    }
+
+    function shareToWhatsApp() {
+        const productName = {!! json_encode($product->name) !!};
+        const productPrice = {!! json_encode('Rp ' . number_format($product->price, 0, ',', '.')) !!};
+        const productUrl = window.location.href;
+        const message = `Lihat produk ini: ${productName}\nHarga: ${productPrice}\n\n${productUrl}`;
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    function shareToInstagram() {
+        copyProductLink();
+        alert('Link telah disalin! Buka Instagram dan tempel link di story atau post Anda.');
+        window.open('https://www.instagram.com/', '_blank');
+    }
+
+    function copyProductLink() {
+        const productUrl = window.location.href;
+        navigator.clipboard.writeText(productUrl).then(function() {
+            const copyButton = document.getElementById('copyLinkText');
+            const originalText = copyButton.textContent;
+            copyButton.textContent = 'Tersalin!';
+            copyButton.parentElement.classList.add('bg-green-50', 'border-green-200');
+
+            setTimeout(function() {
+                copyButton.textContent = originalText;
+                copyButton.parentElement.classList.remove('bg-green-50', 'border-green-200');
+            }, 2000);
+        }).catch(function(err) {
+            console.error('Could not copy text: ', err);
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = productUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Link berhasil disalin!');
+        });
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('shareModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeShareModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeShareModal();
+        }
+    });
+</script>
+@endpush
