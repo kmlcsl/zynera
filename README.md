@@ -9,7 +9,12 @@
 
 ## 🚀 Quick Start untuk Juri/Penguji
 
-**⚡ PENTING: Akses langsung tanpa instalasi!**
+**⚡ PENTING: Setup cepat hanya butuh 2 menit!**
+
+### 📏 **Langkah Cepat:**
+1. 💾 **Import database** dari `zynera/database/zynera.sql` 
+2. 🚀 **Akses aplikasi** di browser
+3. 🔑 **Login** dengan akun demo di bawah
 
 Untuk kemudahan pengujian, gunakan akun yang sudah tersedia:
 
@@ -125,7 +130,43 @@ Untuk kemudahan pengujian, gunakan akun yang sudah tersedia:
 
 ---
 
-## 📋 Instalasi (Jika Diperlukan)
+## 💾 Database Siap Pakai
+
+**🎉 GOOD NEWS: Database sudah tersedia dan siap import!**
+
+Untuk mempermudah pengujian, database lengkap dengan data sample sudah tersedia di:
+```
+📁 zynera/database/zynera.sql
+```
+
+### 🚀 **Quick Import Database:**
+
+**Untuk Laragon/XAMPP:**
+1. Buka **phpMyAdmin** (`http://localhost/phpmyadmin`)
+2. Buat database baru dengan nama `zynera`
+3. Import file `zynera/database/zynera.sql`
+4. Selesai! Akun demo sudah tersedia
+
+**Untuk Command Line:**
+```bash
+# Buat database
+mysql -u root -p -e "CREATE DATABASE zynera;"
+
+# Import database
+mysql -u root -p zynera < zynera/database/zynera.sql
+```
+
+**Untuk MySQL Workbench:**
+1. Connect to MySQL server
+2. Create schema `zynera`
+3. Server → Data Import → Import from Self-Contained File
+4. Select `zynera/database/zynera.sql`
+
+---
+
+## 📋 Instalasi Manual (Opsional)
+
+*Jika ingin setup dari awal atau database import gagal*
 
 ### Prerequisites:
 - PHP 8.4+
@@ -147,7 +188,7 @@ npm install && npm run build
 cp .env.example .env
 php artisan key:generate
 
-# 4. Database setup
+# 4. Database setup (jika tidak import SQL)
 php artisan migrate
 php artisan db:seed
 
@@ -156,6 +197,21 @@ php artisan storage:link
 
 # 6. Start server
 php artisan serve
+```
+
+### ⚙️ **Konfigurasi .env (Sesuaikan):**
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=zynera
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Midtrans (untuk payment testing)
+MIDTRANS_SERVER_KEY=your_server_key
+MIDTRANS_CLIENT_KEY=your_client_key
+MIDTRANS_IS_PRODUCTION=false
 ```
 
 ---
