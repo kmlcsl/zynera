@@ -155,15 +155,6 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label for="expired_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal
-                            Kadaluarsa</label>
-                        <input type="date" name="expired_date" id="expired_date" value="{{ old('expired_date') }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
-                        @error('expired_date')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
 
                     <div>
                         <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Gambar Produk</label>
@@ -174,6 +165,25 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+                </div>
+            </div>
+
+            <!-- Address Information -->
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Alamat Asal Produk</h3>
+                <p class="text-sm text-gray-600 mb-4">Alamat ini akan digunakan untuk sistem penjemputan produk oleh pembeli</p>
+
+                <div>
+                    <label for="alamat_asal" class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap *</label>
+                    <textarea name="alamat_asal" id="alamat_asal" rows="4" required
+                        class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
+                        placeholder="Masukkan alamat lengkap (Jalan, No. Rumah, RT/RW, Desa/Kelurahan, Kecamatan, Kode Pos)">{{ old('alamat_asal') }}</textarea>
+                    @error('alamat_asal')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-1 text-xs text-gray-500">
+                        Contoh: Jl. Merdeka No. 123, RT 001/RW 002, Desa Sukamaju, Kecamatan Meulaboh, 23617
+                    </p>
                 </div>
             </div>
 

@@ -97,6 +97,22 @@
                     <p class="text-gray-700 leading-relaxed">{{ $product->description }}</p>
                 </div>
 
+                <!-- Product Location -->
+                @if ($product->alamat_asal)
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h3 class="font-semibold mb-2 text-blue-800">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Lokasi Penjemputan
+                        </h3>
+                        <p class="text-gray-800 font-medium mb-2">{{ $product->alamat_asal }}</p>
+                        <div class="bg-blue-100 rounded p-2">
+                            <p class="text-xs text-blue-700">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Alamat ini digunakan untuk sistem penjemputan produk. Pastikan Anda dapat mengunjungi lokasi ini.
+                            </p>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Add to Cart Form -->
                 @auth
                     @if ($product->stock > 0)

@@ -24,17 +24,6 @@ class ProductController extends Controller
             });
         }
 
-        // Filter by district
-        if ($request->has('district') && $request->district) {
-            $query->whereHas('village', function ($q) use ($request) {
-                $q->where('parent_id', $request->district);
-            });
-        }
-
-        // Filter by village
-        if ($request->has('village') && $request->village) {
-            $query->where('village_id', $request->village);
-        }
 
         // Search
         if ($request->has('search') && !empty($request->search)) {
@@ -76,24 +65,7 @@ class ProductController extends Controller
 
         $categories = Category::where('is_active', true)->orderBy('name')->get();
 
-        $districts = Region::kecamatan()
-            ->whereHas('parent', function ($q) {
-                $q->where('name', 'Aceh Barat');
-            })
-            ->active()
-            ->orderBy('name')
-            ->get();
-
-        $villages = collect();
-        if ($request->district) {
-            $villages = Region::desa()
-                ->where('parent_id', $request->district)
-                ->active()
-                ->orderBy('name')
-                ->get();
-        }
-
-        return view('products.index', compact('products', 'categories', 'districts', 'villages'));
+        return view('products.index', compact('products', 'categories'));
     }
 
     public function show($slug)

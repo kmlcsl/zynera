@@ -102,7 +102,7 @@ class ProductController extends Controller
             'weight' => 'nullable|numeric|min:0',
             'is_featured' => 'nullable|boolean',
             'ingredients' => 'nullable|array',
-            'expired_date' => 'nullable|date|after:today',
+            'alamat_asal' => 'required|string|max:1000',
         ]);
 
         // SECURITY CHECK: Produsen hanya bisa buat produk untuk dirinya sendiri
@@ -179,7 +179,7 @@ class ProductController extends Controller
             'weight' => 'nullable|numeric|min:0',
             'is_featured' => 'nullable|boolean',
             'ingredients' => 'nullable|array',
-            'expired_date' => 'nullable|date|after:today',
+            'alamat_asal' => 'required|string|max:1000',
         ]);
 
         if (Auth::user()->user_type === 'produsen' && $request->user_id != Auth::id()) {

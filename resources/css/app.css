@@ -14,6 +14,42 @@
 }
 
 @layer components {
+    /* Dashboard specific styles */
+    .page-title h2 {
+        @apply text-2xl font-semibold text-gray-800 capitalize truncate;
+        line-height: 1.2;
+    }
+
+    .page-subtitle {
+        @apply text-sm text-gray-600 mt-1 truncate;
+    }
+    
+    /* Activity content styling */
+    .activity-content h4 {
+        @apply font-medium text-gray-900 text-sm;
+    }
+    
+    .activity-content p {
+        @apply text-gray-600 text-sm mt-1;
+    }
+    
+    .activity-time {
+        @apply text-gray-500 text-xs mt-1;
+    }
+    
+    /* Stat item styling */
+    .stat-item h4 {
+        @apply text-sm text-gray-600 font-medium mb-2;
+    }
+    
+    .stat-number {
+        @apply text-2xl font-bold text-gray-900;
+    }
+    
+    /* Card title styling */
+    .card-title {
+        @apply text-lg font-semibold text-gray-800 m-0;
+    }
     /* Original button styles */
     .btn-primary {
         @apply bg-gampong-primary hover:bg-green-800 text-white font-bold py-2 px-4 rounded;

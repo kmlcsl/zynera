@@ -201,29 +201,17 @@
                         </div>
                     </div>
 
-                    <!-- Weight & Expired Date -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">Berat
-                                (gram)</label>
-                            <input type="number" name="weight" id="weight"
-                                value="{{ old('weight', $product->weight) }}" min="0" step="0.01"
-                                class="w-full rounded-lg focus:border-green-500 focus:ring-green-500 @error('weight') border-red-300 @enderror"
-                                placeholder="0">
-                            @error('weight')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="expired_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal
-                                Kadaluarsa</label>
-                            <input type="date" name="expired_date" id="expired_date"
-                                value="{{ old('expired_date', $product->expired_date ? $product->expired_date->format('Y-m-d') : '') }}"
-                                class="w-full rounded-lg focus:border-green-500 focus:ring-green-500 @error('expired_date') border-red-300 @enderror">
-                            @error('expired_date')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <!-- Weight -->
+                    <div>
+                        <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">Berat
+                            (gram)</label>
+                        <input type="number" name="weight" id="weight"
+                            value="{{ old('weight', $product->weight) }}" min="0" step="0.01"
+                            class="w-full rounded-lg focus:border-green-500 focus:ring-green-500 @error('weight') border-red-300 @enderror"
+                            placeholder="0">
+                        @error('weight')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Product Statistics -->
@@ -273,6 +261,25 @@
                             <div><strong>Diperbarui:</strong> {{ $product->updated_at->format('d M Y H:i') }}</div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Address Information -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 border-b pb-2">Alamat Asal Produk</h3>
+                <p class="text-sm text-gray-600 mb-4">Alamat ini akan digunakan untuk sistem penjemputan produk oleh pembeli</p>
+
+                <div>
+                    <label for="alamat_asal" class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap *</label>
+                    <textarea name="alamat_asal" id="alamat_asal" rows="4" required
+                        class="w-full rounded-lg focus:border-green-500 focus:ring-green-500 @error('alamat_asal') border-red-300 @enderror"
+                        placeholder="Masukkan alamat lengkap (Jalan, No. Rumah, RT/RW, Desa/Kelurahan, Kecamatan, Kode Pos)">{{ old('alamat_asal', $product->alamat_asal) }}</textarea>
+                    @error('alamat_asal')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-1 text-xs text-gray-500">
+                        Contoh: Jl. Merdeka No. 123, RT 001/RW 002, Desa Sukamaju, Kecamatan Meulaboh, 23617
+                    </p>
                 </div>
             </div>
 

@@ -129,7 +129,7 @@
                         : (json_decode($product->ingredients, true) ?:
                         []);
                 @endphp
-                @if ($ingredients && count($ingredients) > 0)
+@if ($ingredients && count($ingredients) > 0)
                     <div class="mt-6">
                         <label class="block text-sm font-medium text-gray-600 mb-2">Bahan-bahan</label>
                         <div class="flex flex-wrap gap-2">
@@ -139,6 +139,22 @@
                                     {{ $ingredient }}
                                 </span>
                             @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                @if ($product->alamat_asal)
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Alamat Asal Produk</label>
+                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-map-marker-alt text-blue-600 mt-1"></i>
+                                <p class="text-gray-900 font-medium">{{ $product->alamat_asal }}</p>
+                            </div>
+                            <p class="text-xs text-blue-700 mt-2">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Lokasi ini digunakan untuk sistem penjemputan produk oleh pembeli.
+                            </p>
                         </div>
                     </div>
                 @endif

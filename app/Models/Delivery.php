@@ -17,6 +17,9 @@ class Delivery extends Model
         'assigned_at',
         'picked_up_at',
         'delivered_at',
+        'pickup_time',
+        'delivery_time', 
+        'duration',
         'notes',
     ];
 
@@ -24,6 +27,9 @@ class Delivery extends Model
         'assigned_at' => 'datetime',
         'picked_up_at' => 'datetime',
         'delivered_at' => 'datetime',
+        'pickup_time' => 'datetime',
+        'delivery_time' => 'datetime',
+        'duration' => 'decimal:2',
     ];
 
     // Status constants

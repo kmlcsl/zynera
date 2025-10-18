@@ -114,8 +114,6 @@ class SocialAuthController extends Controller
             'login_provider' => 'google',
             'phone' => $additionalData['phone'] ?? null,
             'address' => $additionalData['address'] ?? null,
-            'village' => $additionalData['village'] ?? null,
-            'district' => $additionalData['district'] ?? null,
             'notification_preferences' => [
                 'email_notifications' => true,
                 'order_updates' => true,
@@ -230,8 +228,6 @@ class SocialAuthController extends Controller
             'login_provider' => $googleRegistrationData['login_provider'],
             'phone' => $googleRegistrationData['phone'],
             'address' => $googleRegistrationData['address'],
-            'village' => $googleRegistrationData['village'],
-            'district' => $googleRegistrationData['district'],
             'notification_preferences' => $googleRegistrationData['notification_preferences'],
         ];
 
@@ -588,8 +584,6 @@ class SocialAuthController extends Controller
             'user_type' => ['required', 'in:konsumen,produsen,kurir'],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string'],
-            'village' => ['nullable', 'string', 'max:255'],
-            'district' => ['nullable', 'string', 'max:255'],
         ]);
 
         // Get temp Google data
@@ -608,7 +602,7 @@ class SocialAuthController extends Controller
         // Create Google user with selected type
         $googleUser = (object) $tempGoogleData;
 
-        return $this->initiateGoogleRegistrationWithOtpFromArray($tempGoogleData, $request->user_type, $request->only(['phone', 'address', 'village', 'district']));
+        return $this->initiateGoogleRegistrationWithOtpFromArray($tempGoogleData, $request->user_type, $request->only(['phone', 'address']));
     }
 
     /**
@@ -637,8 +631,6 @@ class SocialAuthController extends Controller
             'login_provider' => 'google',
             'phone' => $additionalData['phone'] ?? null,
             'address' => $additionalData['address'] ?? null,
-            'village' => $additionalData['village'] ?? null,
-            'district' => $additionalData['district'] ?? null,
             'notification_preferences' => [
                 'email_notifications' => true,
                 'order_updates' => true,

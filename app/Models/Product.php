@@ -26,7 +26,7 @@ class Product extends Model
         'is_featured',
         'weight',
         'ingredients',
-        'expired_date'
+        'alamat_asal'
     ];
 
     protected $casts = [
@@ -34,7 +34,6 @@ class Product extends Model
         'ingredients' => 'array',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
-        'expired_date' => 'date',
     ];
 
     // Relationships
@@ -160,6 +159,11 @@ class Product extends Model
     public function getTotalReviewsAttribute()
     {
         return $this->reviews()->count();
+    }
+
+    public function getFullAddressAttribute()
+    {
+        return $this->alamat_asal;
     }
 
     // ============================================================

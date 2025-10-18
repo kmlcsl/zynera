@@ -216,7 +216,8 @@ class DashboardController extends Controller
                     $totalHours = 0;
                     $validDurations = 0;
                     foreach ($deliveredOrders as $delivery) {
-                        $duration = $delivery->duration;
+                        // Use calculateDuration method or duration field
+                        $duration = $delivery->duration ?? $delivery->calculateDuration();
                         if ($duration !== null && $duration > 0) {
                             $totalHours += $duration;
                             $validDurations++;

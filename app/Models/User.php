@@ -176,7 +176,7 @@ class User extends Authenticatable
             $this->district
         ]);
 
-        return implode(', ', $addressParts);
+        return empty($addressParts) ? $this->address ?? '' : implode(', ', $addressParts);
     }
 
     public function getInitialsAttribute()

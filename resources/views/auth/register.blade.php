@@ -271,40 +271,11 @@
 
                         <!-- Conditional Fields Based on User Type -->
 
-                        <!-- Location Fields for Produsen -->
+                        <!-- Info for Produsen -->
                         <div x-show="userType === 'produsen'" x-transition class="space-y-4">
                             <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                                <h4 class="text-sm font-medium text-emerald-800 mb-2">Informasi Lokasi Usaha</h4>
-                                <p class="text-xs text-emerald-600 mb-3">Data ini akan membantu pembeli menemukan
-                                    produk dari wilayah Anda</p>
-
-                                <div class="grid grid-cols-1 gap-3">
-                                    <div>
-                                        <label for="village" class="block text-sm font-medium text-slate-700 mb-1">
-                                            Desa/Kelurahan <span class="text-red-500">*</span>
-                                        </label>
-                                        <input id="village" name="village" type="text"
-                                            value="{{ old('village') }}"
-                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                                            placeholder="Contoh: Desa Makmur">
-                                        @error('village')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-
-                                    <div>
-                                        <label for="district" class="block text-sm font-medium text-slate-700 mb-1">
-                                            Kecamatan <span class="text-red-500">*</span>
-                                        </label>
-                                        <input id="district" name="district" type="text"
-                                            value="{{ old('district') }}"
-                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                                            placeholder="Contoh: Cianjur">
-                                        @error('district')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
+                                <h4 class="text-sm font-medium text-emerald-800 mb-2">Informasi Penjual</h4>
+                                <p class="text-xs text-emerald-600">Sebagai penjual, Anda dapat mengelola produk dan toko online Anda dengan mudah.</p>
                             </div>
                         </div>
 
@@ -312,26 +283,7 @@
                         <div x-show="userType === 'kurir'" x-transition class="space-y-4">
                             <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
                                 <h4 class="text-sm font-medium text-blue-800 mb-2">Informasi Kurir</h4>
-                                <p class="text-xs text-blue-600 mb-3">Sebagai kurir, Anda akan membantu mengantarkan
-                                    pesanan ke pelanggan</p>
-
-                                <div class="grid grid-cols-1 gap-3">
-                                    <div>
-                                        <label for="coverage_area"
-                                            class="block text-sm font-medium text-slate-700 mb-1">
-                                            Area Jangkauan <span class="text-red-500">*</span>
-                                        </label>
-                                        <input id="coverage_area" name="district" type="text"
-                                            value="{{ old('district') }}"
-                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                            placeholder="Contoh: Aceh Barat, Aceh">
-                                        <p class="mt-1 text-xs text-slate-500">Sebutkan kecamatan yang bisa Anda
-                                            jangkau</p>
-                                        @error('district')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
+                                <p class="text-xs text-blue-600">Sebagai kurir, Anda dapat mengantarkan pesanan dan mendapat penghasilan tambahan.</p>
                             </div>
                         </div>
 

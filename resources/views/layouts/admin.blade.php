@@ -17,6 +17,9 @@
 
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Fallback CSS for styling issues -->
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
     @stack('styles')
 </head>
@@ -156,7 +159,7 @@
 
                         <div class="page-title">
                             <h2 id="pageTitle">@yield('page-title', 'Dashboard') - {{ ucfirst(Auth::user()->user_type ?? 'admin') }}</h2>
-                            <p class="page-subtitle">@yield('page-description', 'Selamat datang di Zynera Minyak Jelantah Marketplace')</p>
+                            <p class="page-subtitle">@yield('page-subtitle', 'Selamat datang di Zynera Minyak Jelantah Marketplace')</p>
                         </div>
                     </div>
 

@@ -50,32 +50,20 @@ class RegisteredUserController extends Controller
         switch ($userType) {
             case 'konsumen':
                 $rules['phone'] = ['nullable', 'string', 'max:20'];
-                $rules['village'] = ['nullable', 'string', 'max:255'];
-                $rules['district'] = ['nullable', 'string', 'max:255'];
                 break;
 
             case 'produsen':
                 $rules['phone'] = ['required', 'string', 'max:20'];
-                $rules['village'] = ['required', 'string', 'max:255'];
-                $rules['district'] = ['required', 'string', 'max:255'];
                 break;
 
             case 'kurir':
                 $rules['phone'] = ['required', 'string', 'max:20'];
-                $rules['village'] = ['nullable', 'string', 'max:255'];
-                $rules['district'] = ['required', 'string', 'max:255'];
                 break;
         }
 
         // Custom validation messages
         $messages = [
             'phone.required' => 'Nomor WhatsApp wajib diisi untuk ' . $this->getUserTypeLabel($userType),
-            'village.required' => $userType === 'produsen'
-                ? 'Desa/Gampong wajib diisi untuk produsen'
-                : 'Field ini wajib diisi',
-            'district.required' => $userType === 'produsen'
-                ? 'Kecamatan wajib diisi untuk produsen'
-                : ($userType === 'kurir' ? 'Area jangkauan wajib diisi untuk kurir' : 'Field ini wajib diisi'),
             'user_type.required' => 'Silakan pilih jenis akun yang ingin didaftarkan',
             'user_type.in' => 'Jenis akun yang dipilih tidak valid',
             'terms.accepted' => 'Anda harus menyetujui syarat dan ketentuan',
@@ -100,8 +88,6 @@ class RegisteredUserController extends Controller
             'user_type' => $userType,
             'phone' => $request->phone,
             'address' => $request->address,
-            'village' => $request->village,
-            'district' => $request->district,
         ];
 
         // Simpan di session dengan expiry (30 menit)
@@ -199,8 +185,6 @@ class RegisteredUserController extends Controller
             'email_verified_at' => now(),
             'phone' => $registrationData['phone'],
             'address' => $registrationData['address'],
-            'village' => $registrationData['village'],
-            'district' => $registrationData['district'],
         ]);
 
         // Hapus OTP dan session data

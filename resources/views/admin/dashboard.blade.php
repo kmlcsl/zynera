@@ -1,77 +1,210 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard - Zynera Admin Panel')
+@section('title', $dashboardData['page_title'] . ' - Zynera Admin Panel')
 
-@section('page-title', 'Dashboard')
+@section('page-title', $dashboardData['page_title'])
 
-@section('page-subtitle', 'Selamat datang di Zynera - Platform Minyak Jelantah')
+@section('page-subtitle', $dashboardData['page_description'])
 
 @section('content')
     <!-- Stats Cards -->
     <div class="stats-grid">
-        <div class="stat-card stat-card-1">
-            <div class="stat-content">
-                <div class="stat-info">
-                    <h3>Total Penjualan</h3>
-                    <div class="stat-value">Rp {{ number_format($stats['total_sales'] ?? 24567000, 0, ',', '.') }}</div>
-                    <div class="stat-change">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+{{ $stats['sales_change'] ?? '12.5' }}%</span>
+        @if(Auth::user()->user_type == 'admin')
+            <!-- Admin Stats -->
+            <div class="stat-card stat-card-1">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Total Revenue</h3>
+                        <div class="stat-value">Rp {{ number_format($stats['total_revenue'] ?? 0, 0, ',', '.') }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Dari pesanan selesai</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
                     </div>
                 </div>
-                <div class="stat-icon">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
             </div>
-        </div>
 
-        <div class="stat-card stat-card-2">
-            <div class="stat-content">
-                <div class="stat-info">
-                    <h3>{{ Auth::user()->user_type == 'admin' ? 'Total Pesanan' : 'Pesanan Saya' }}</h3>
-                    <div class="stat-value">{{ number_format($stats['total_orders'] ?? 1423) }}</div>
-                    <div class="stat-change">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+{{ $stats['orders_change'] ?? '8.2' }}%</span>
+            <div class="stat-card stat-card-2">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Pesanan Hari Ini</h3>
+                        <div class="stat-value">{{ number_format($stats['total_orders'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Hari ini</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-bag"></i>
                     </div>
                 </div>
-                <div class="stat-icon">
-                    <i class="fas fa-shopping-bag"></i>
-                </div>
             </div>
-        </div>
 
-        <div class="stat-card stat-card-3">
-            <div class="stat-content">
-                <div class="stat-info">
-                    <h3>{{ Auth::user()->user_type == 'admin' ? 'Total Pengguna' : 'Pelanggan' }}</h3>
-                    <div class="stat-value">{{ number_format($stats['total_users'] ?? 8967) }}</div>
-                    <div class="stat-change">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+{{ $stats['users_change'] ?? '15.3' }}%</span>
+            <div class="stat-card stat-card-3">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Total Pengguna</h3>
+                        <div class="stat-value">{{ number_format($stats['total_users'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-users"></i>
+                            <span>Semua pengguna</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
                     </div>
                 </div>
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
             </div>
-        </div>
 
-        <div class="stat-card stat-card-4">
-            <div class="stat-content">
-                <div class="stat-info">
-                    <h3>{{ Auth::user()->user_type == 'admin' ? 'Produk Minyak' : 'Stok Minyak' }}</h3>
-                    <div class="stat-value">{{ number_format($stats['total_products'] ?? 234) }} L</div>
-                    <div class="stat-change">
-                        <i class="fas fa-arrow-{{ ($stats['product_change'] ?? -2.1) >= 0 ? 'up' : 'down' }}" style="color: {{ ($stats['product_change'] ?? -2.1) >= 0 ? '#34d399' : '#fca5a5' }};"></i>
-                        <span>{{ ($stats['product_change'] ?? -2.1) >= 0 ? '+' : '' }}{{ $stats['product_change'] ?? '-2.1' }}%</span>
+            <div class="stat-card stat-card-4">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Total Produk</h3>
+                        <div class="stat-value">{{ number_format($stats['total_products'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-box"></i>
+                            <span>Produk aktif: {{ number_format($stats['active_products'] ?? 0) }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-oil-can"></i>
                     </div>
                 </div>
-                <div class="stat-icon">
-                    <i class="fas fa-oil-can"></i>
+            </div>
+        @elseif(Auth::user()->user_type == 'produsen')
+            <!-- Producer Stats -->
+            <div class="stat-card stat-card-1">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Pendapatan Saya</h3>
+                        <div class="stat-value">Rp {{ number_format($stats['my_revenue'] ?? 0, 0, ',', '.') }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Dari pesanan selesai</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="stat-card stat-card-2">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Pesanan Masuk Hari Ini</h3>
+                        <div class="stat-value">{{ number_format($stats['incoming_orders'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Pending: {{ number_format($stats['pending_orders'] ?? 0) }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-3">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Produk Saya</h3>
+                        <div class="stat-value">{{ number_format($stats['my_products'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Aktif: {{ number_format($stats['active_products'] ?? 0) }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-4">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Stok Rendah</h3>
+                        <div class="stat-value">{{ number_format($stats['low_stock_products'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>≤10 unit</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                </div>
+            </div>
+        @elseif(Auth::user()->user_type == 'kurir')
+            <!-- Courier Stats -->
+            <div class="stat-card stat-card-1">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Pengiriman Hari Ini</h3>
+                        <div class="stat-value">{{ number_format($stats['today_deliveries'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Hari ini</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-2">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Menunggu Pickup</h3>
+                        <div class="stat-value">{{ number_format($stats['pending_deliveries'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-clock"></i>
+                            <span>Dalam proses</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-3">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Selesai</h3>
+                        <div class="stat-value">{{ number_format($stats['completed_deliveries'] ?? 0) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Berhasil diantar</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card-4">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h3>Rating Saya</h3>
+                        <div class="stat-value">{{ number_format($stats['delivery_rating'] ?? 0, 1) }}</div>
+                        <div class="stat-change">
+                            <i class="fas fa-star"></i>
+                            <span>Rating pelanggan</span>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Content Grid -->
@@ -102,62 +235,112 @@
                 </button>
             </div>
             <div class="activity-list" id="activityList">
-                @forelse($activities ?? [] as $activity)
-                    <div class="activity-item">
-                        <div class="activity-icon {{ $activity['type'] }}">
-                            <i class="fas {{ $activity['icon'] }}"></i>
+                @if(Auth::user()->user_type == 'admin')
+                    <!-- Recent Orders -->
+                    @forelse($recentData['recent_orders'] ?? [] as $order)
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Pesanan Baru</h4>
+                                <p>{{ $order->user->name ?? 'Unknown' }} - Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
+                                <span class="activity-time">{{ $order->created_at->diffForHumans() }}</span>
+                            </div>
                         </div>
-                        <div class="activity-content">
-                            <h4>{{ $activity['title'] }}</h4>
-                            <p>{{ $activity['description'] }}</p>
-                            <span class="activity-time">{{ $activity['time'] }}</span>
+                    @empty
+                    @endforelse
+                    
+                    <!-- Recent Users -->
+                    @forelse($recentData['recent_users'] ?? [] as $user)
+                        <div class="activity-item">
+                            <div class="activity-icon info">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Pengguna Baru Terdaftar</h4>
+                                <p>{{ $user->name }} ({{ ucfirst($user->user_type) }})</p>
+                                <span class="activity-time">{{ $user->created_at->diffForHumans() }}</span>
+                            </div>
                         </div>
-                    </div>
-                @empty
-                    <div class="activity-item">
-                        <div class="activity-icon success">
-                            <i class="fas fa-check"></i>
+                    @empty
+                    @endforelse
+                @elseif(Auth::user()->user_type == 'produsen')
+                    <!-- Producer Recent Orders -->
+                    @forelse($recentData['recent_orders'] ?? [] as $order)
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Pesanan untuk Produk Anda</h4>
+                                <p>{{ $order->user->name ?? 'Unknown' }} - Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
+                                <span class="activity-time">{{ $order->created_at->diffForHumans() }}</span>
+                            </div>
                         </div>
-                        <div class="activity-content">
-                            <h4>Pesanan minyak jelantah baru</h4>
-                            <p>Pesanan #ZYN-{{ rand(1000,9999) }} - Rp {{ number_format(rand(50000,500000), 0, ',', '.') }}</p>
-                            <span class="activity-time">2 menit yang lalu</span>
+                    @empty
+                    @endforelse
+                    
+                    <!-- Low Stock Alert -->
+                    @if(isset($additionalData['low_stock_products']))
+                        @forelse($additionalData['low_stock_products'] as $product)
+                            <div class="activity-item">
+                                <div class="activity-icon warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Stok Rendah</h4>
+                                    <p>{{ $product->name }} - Tersisa {{ $product->stock }} unit</p>
+                                    <span class="activity-time">Peringatan stok</span>
+                                </div>
+                            </div>
+                        @empty
+                        @endforelse
+                    @endif
+                @elseif(Auth::user()->user_type == 'kurir')
+                    <!-- Courier Assigned Orders -->
+                    @forelse($recentData['assigned_orders'] ?? [] as $delivery)
+                        <div class="activity-item">
+                            <div class="activity-icon info">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Pengiriman Ditugaskan</h4>
+                                <p>Pesanan {{ $delivery->order->order_number ?? 'N/A' }} - {{ $delivery->order->user->name ?? 'Unknown' }}</p>
+                                <span class="activity-time">{{ $delivery->created_at->diffForHumans() }}</span>
+                            </div>
                         </div>
-                    </div>
-
+                    @empty
+                    @endforelse
+                    
+                    <!-- Delivery History -->
+                    @forelse($recentData['delivery_history'] ?? [] as $delivery)
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Pengiriman Selesai</h4>
+                                <p>Pesanan {{ $delivery->order->order_number ?? 'N/A' }} berhasil diantar</p>
+                                <span class="activity-time">{{ $delivery->updated_at->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                    @empty
+                    @endforelse
+                @endif
+                
+                @if(empty($recentData) || (empty($recentData['recent_orders']) && empty($recentData['recent_users']) && empty($recentData['assigned_orders']) && empty($recentData['delivery_history'])))
                     <div class="activity-item">
                         <div class="activity-icon info">
-                            <i class="fas fa-user-plus"></i>
+                            <i class="fas fa-info-circle"></i>
                         </div>
                         <div class="activity-content">
-                            <h4>{{ Auth::user()->user_type == 'admin' ? 'Pengguna baru terdaftar' : 'Pelanggan baru bergabung' }}</h4>
-                            <p>{{ Auth::user()->user_type == 'admin' ? 'supplier.minyak@example.com' : 'Pelanggan #987' }}</p>
-                            <span class="activity-time">15 menit yang lalu</span>
+                            <h4>Belum ada aktivitas</h4>
+                            <p>Aktivitas terbaru akan muncul di sini</p>
+                            <span class="activity-time">-</span>
                         </div>
                     </div>
-
-                    <div class="activity-item">
-                        <div class="activity-icon warning">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>{{ Auth::user()->user_type == 'admin' ? 'Stok minyak menipis' : 'Peringatan inventori' }}</h4>
-                            <p>Minyak Jelantah Grade A - Tersisa 5 liter</p>
-                            <span class="activity-time">1 jam yang lalu</span>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-icon purple">
-                            <i class="fas fa-truck"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Pengiriman selesai</h4>
-                            <p>{{ Auth::user()->user_type == 'admin' ? 'Pengiriman minyak jelantah ke Jakarta' : 'Pesanan Anda telah diterima' }}</p>
-                            <span class="activity-time">3 jam yang lalu</span>
-                        </div>
-                    </div>
-                @endforelse
+                @endif
             </div>
         </div>
     </div>
@@ -254,47 +437,159 @@
     <div class="additional-stats">
         <div class="stat-row">
             <div class="stat-item">
-                <h4>Pesanan Hari Ini</h4>
-                <span class="stat-number">{{ $stats['today_orders'] ?? 45 }}</span>
+                <h4>Total Konsumen</h4>
+                <span class="stat-number">{{ $stats['total_customers'] ?? 0 }}</span>
             </div>
             <div class="stat-item">
-                <h4>Perlu Review</h4>
-                <span class="stat-number">{{ $stats['pending_reviews'] ?? 12 }}</span>
+                <h4>Total Produsen</h4>
+                <span class="stat-number">{{ $stats['total_producers'] ?? 0 }}</span>
             </div>
             <div class="stat-item">
-                <h4>Pengguna Aktif</h4>
-                <span class="stat-number">{{ $stats['active_users'] ?? 234 }}</span>
+                <h4>Total Kurir</h4>
+                <span class="stat-number">{{ $stats['total_couriers'] ?? 0 }}</span>
             </div>
             <div class="stat-item">
-                <h4>Stok Tersedia</h4>
-                <span class="stat-number">{{ $stats['available_stock'] ?? 1267 }}L</span>
+                <h4>Pesanan Pending</h4>
+                <span class="stat-number">{{ $stats['pending_orders'] ?? 0 }}</span>
             </div>
         </div>
     </div>
-    @else
+    @elseif(Auth::user()->user_type == 'produsen')
     <div class="additional-stats">
         <div class="stat-row">
             <div class="stat-item">
-                <h4>Penjualan Hari Ini</h4>
-                <span class="stat-number">{{ $stats['today_sales'] ?? 23 }}L</span>
+                <h4>Total Pesanan</h4>
+                <span class="stat-number">{{ $stats['my_orders'] ?? 0 }}</span>
+            </div>
+            <div class="stat-item">
+                <h4>Pesanan Pending</h4>
+                <span class="stat-number">{{ $stats['pending_orders'] ?? 0 }}</span>
+            </div>
+            <div class="stat-item">
+                <h4>Produk Aktif</h4>
+                <span class="stat-number">{{ $stats['active_products'] ?? 0 }}</span>
             </div>
             <div class="stat-item">
                 <h4>Stok Menipis</h4>
-                <span class="stat-number">{{ $stats['low_stock'] ?? 8 }}</span>
+                <span class="stat-number">{{ $stats['low_stock_products'] ?? 0 }}</span>
+            </div>
+        </div>
+    </div>
+    @elseif(Auth::user()->user_type == 'kurir')
+    <div class="additional-stats">
+        <div class="stat-row">
+            <div class="stat-item">
+                <h4>Total Pengiriman</h4>
+                <span class="stat-number">{{ $stats['assigned_deliveries'] ?? 0 }}</span>
             </div>
             <div class="stat-item">
-                <h4>Pelanggan Baru</h4>
-                <span class="stat-number">{{ $stats['new_customers'] ?? 15 }}</span>
+                <h4>Gagal Kirim</h4>
+                <span class="stat-number">{{ $stats['failed_deliveries'] ?? 0 }}</span>
             </div>
             <div class="stat-item">
-                <h4>Tingkat Penyelesaian</h4>
-                <span class="stat-number">{{ $stats['completion_rate'] ?? 92 }}%</span>
+                <h4>On-Time Rate</h4>
+                <span class="stat-number">{{ $additionalData['performance_metrics']['on_time_delivery'] ?? 0 }}%</span>
+            </div>
+            <div class="stat-item">
+                <h4>Waktu Rata-rata</h4>
+                <span class="stat-number">{{ $additionalData['performance_metrics']['avg_delivery_time'] ?? 0 }}h</span>
             </div>
         </div>
     </div>
     @endif
 
 @endsection
+
+@push('styles')
+<style>
+/* Dashboard CSS Fix untuk memastikan styling teraplikasi */
+.stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    gap: 24px !important;
+    margin-bottom: 32px !important;
+}
+
+.stat-info h3 {
+    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500 !important;
+    margin-bottom: 8px !important;
+    text-transform: none !important;
+}
+
+.stat-value {
+    font-size: 36px !important;
+    font-weight: 700 !important;
+    color: white !important;
+    margin-bottom: 8px !important;
+    line-height: 1 !important;
+}
+
+.stat-change {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 12px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.stat-change i {
+    margin-right: 4px !important;
+    font-size: 12px !important;
+}
+
+.stat-change span {
+    font-size: 12px !important;
+}
+
+.activity-content h4 {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #1f2937 !important;
+    margin-bottom: 4px !important;
+}
+
+.activity-content p {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+    margin-bottom: 4px !important;
+    line-height: 1.4 !important;
+}
+
+.activity-time {
+    font-size: 11px !important;
+    color: #9ca3af !important;
+    display: block !important;
+}
+
+.stat-item h4 {
+    font-size: 14px !important;
+    color: #6b7280 !important;
+    font-weight: 500 !important;
+    margin-bottom: 8px !important;
+}
+
+.stat-number {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    line-height: 1.2 !important;
+}
+
+.card-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    margin: 0 !important;
+}
+
+.chart-placeholder p {
+    color: #6b7280 !important;
+    margin-top: 8px !important;
+    font-size: 14px !important;
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>

@@ -258,45 +258,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Village & District for Produsen -->
-                            <div x-show="userType === 'produsen'" class="grid grid-cols-1 gap-3">
-                                <div>
-                                    <label for="village" class="block text-sm font-medium text-slate-700 mb-1">
-                                        Desa/Kelurahan <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="village" id="village"
-                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                                        placeholder="Contoh: Desa Makmur">
-                                    @error('village')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label for="district" class="block text-sm font-medium text-slate-700 mb-1">
-                                        Kecamatan <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="district" id="district"
-                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                                        placeholder="Contoh: Cianjur">
-                                    @error('district')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
 
-                            <!-- District for Kurir -->
-                            <div x-show="userType === 'kurir'">
-                                <label for="district_kurir" class="block text-sm font-medium text-slate-700 mb-1">
-                                    Area Jangkauan <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="district" id="district_kurir"
-                                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                                    placeholder="Contoh: Aceh Barat, Aceh">
-                                <p class="mt-1 text-xs text-slate-500">Sebutkan kecamatan yang bisa Anda jangkau</p>
-                                @error('district')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
                         </div>
 
                         <!-- Submit Button -->

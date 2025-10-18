@@ -35,7 +35,7 @@
                 </p>
 
                 <!-- Quick Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
                     <div class="text-center">
                         <div class="text-2xl font-bold text-emerald-600 mb-1">{{ $products->total() }}+</div>
                         <div class="text-slate-600 text-xs">Produk Tersedia</div>
@@ -43,10 +43,6 @@
                     <div class="text-center">
                         <div class="text-2xl font-bold text-teal-600 mb-1">{{ $categories->count() }}+</div>
                         <div class="text-slate-600 text-xs">Kategori</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-cyan-600 mb-1">{{ $districts->count() }}+</div>
-                        <div class="text-slate-600 text-xs">Wilayah</div>
                     </div>
                     <div class="text-center">
                         <div class="text-2xl font-bold text-orange-600 mb-1">100%</div>
@@ -143,7 +139,7 @@
 
                         <!-- Advanced Filters -->
                         <div class="bg-white/70 rounded-lg p-3 border border-emerald-100">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="grid grid-cols-1 gap-3">
                                 <!-- Category Filter -->
                                 <div>
                                     <label class="block text-xs font-medium text-slate-700 mb-1">
@@ -163,47 +159,8 @@
                                         @endforeach
                                     </select>
                                 </div>
-
-                                <!-- District Filter -->
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700 mb-1">
-                                        <span class="flex items-center">
-                                            <span class="mr-1">🏘️</span>
-                                            Kecamatan
-                                        </span>
-                                    </label>
-                                    <select name="district" id="district-filter"
-                                        class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 transition-all duration-300 bg-white shadow-sm">
-                                        <option value="">Semua Kecamatan</option>
-                                        @foreach ($districts as $district)
-                                            <option value="{{ $district->id }}"
-                                                {{ request('district') == $district->id ? 'selected' : '' }}>
-                                                {{ $district->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <!-- Village Filter -->
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700 mb-1">
-                                        <span class="flex items-center">
-                                            <span class="mr-1">🏡</span>
-                                            Desa/Kelurahan
-                                        </span>
-                                    </label>
-                                    <select name="village" id="village-filter"
-                                        class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 transition-all duration-300 bg-white shadow-sm">
-                                        <option value="">Semua Desa/Kelurahan</option>
-                                        @foreach ($villages as $village)
-                                            <option value="{{ $village->id }}"
-                                                {{ request('village') == $village->id ? 'selected' : '' }}>
-                                                {{ $village->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
                             </div>
+                        </div>
                         </div>
 
                         <!-- Action Buttons -->
@@ -253,23 +210,7 @@
                                 🏷️ {{ $selectedCategory->name ?? 'Kategori' }}
                             </span>
                         @endif
-                        @if (request('district'))
-                            @php
-                                $selectedDistrict = $districts->where('id', request('district'))->first();
-                            @endphp
-                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">
-                                🏘️ {{ $selectedDistrict->name ?? 'Kecamatan' }}
-                            </span>
-                        @endif
-                        @if (request('village'))
-                            @php
-                                $selectedVillage = $villages->where('id', request('village'))->first();
-                            @endphp
-                            <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">
-                                🏡 {{ $selectedVillage->name ?? 'Desa' }}
-                            </span>
-                        @endif
-                        @if (!request('search') && !request('category') && !request('district') && !request('village'))
+                        @if (!request('search') && !request('category'))
                             <span class="text-slate-500 italic">Tidak ada filter aktif</span>
                         @endif
                     </div>
@@ -539,45 +480,6 @@
                 }
             });
 
-            // District to Village Filter (existing functionality)
-            document.getElementById('district-filter').addEventListener('change', function() {
-                const districtId = this.value;
-                const villageSelect = document.getElementById('village-filter');
-
-                // Clear village options
-                villageSelect.innerHTML = '<option value="">Semua Desa/Kelurahan</option>';
-
-                if (districtId) {
-                    // Show loading
-                    villageSelect.innerHTML = '<option value="">Loading...</option>';
-
-                    fetch(`{{ route('products.villages-by-district') }}?district_id=${districtId}`)
-                        .then(response => response.json())
-                        .then(villages => {
-                            villageSelect.innerHTML = '<option value="">Semua Desa/Kelurahan</option>';
-                            villages.forEach(village => {
-                                const option = document.createElement('option');
-                                option.value = village.id;
-                                option.textContent = village.name;
-                                if ({{ request('village') ?: 'null' }} == village.id) {
-                                    option.selected = true;
-                                }
-                                villageSelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching villages:', error);
-                            villageSelect.innerHTML =
-                                '<option value="">Error loading villages</option>';
-                        });
-                }
-            });
-
-            // Trigger initial load if district is selected
-            const initialDistrict = document.getElementById('district-filter').value;
-            if (initialDistrict) {
-                document.getElementById('district-filter').dispatchEvent(new Event('change'));
-            }
 
             // Auto-close filter on mobile after search (optional UX enhancement)
             const searchForm = filterForm.querySelector('form');
