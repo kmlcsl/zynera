@@ -4,7 +4,7 @@
 @section('page-title', 'Kelola Pengiriman')
 @section('page-description')
 @if (auth()->user()->user_type === 'admin')
-Kelola semua pengiriman di platform AgriConnect.ID
+Kelola semua pengiriman di platform Zynera.ID
 @elseif(auth()->user()->user_type === 'kurir')
 Kelola tugas pengiriman Anda
 @endif
@@ -996,3 +996,4 @@ Kelola tugas pengiriman Anda
 });
 </script>
 @endpush
+

@@ -4,7 +4,7 @@
 @section('page-title', 'Laporan Penjualan')
 @section('page-description')
     @if (auth()->user()->user_type === 'admin')
-        Analisis penjualan keseluruhan platform AgriConnect
+        Analisis penjualan keseluruhan platform Zynera
     @else
         Analisis penjualan produk Anda
     @endif
@@ -254,3 +254,4 @@
         }
     </script>
 @endsection
+

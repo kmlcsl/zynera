@@ -79,7 +79,7 @@
 
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
                     <div
-                        class="px-4 sm:px-6 py-3 {{ $meta['bg'] }} rounded-2xl backdrop-blur-sm border border-white/20 flex items-center shadow-lg min-w-0 flex-1 sm:flex-none">
+                        class="px-4 sm:px-6 py-3 {{ $meta['bg'] }} rounded-2xl backdrop-blur-sm border border-white/20 flex items-center shadow-lg min-w-0 flex-1 sm:flex-none status-badge">
                         <span class="mr-2 text-lg">{{ $meta['icon'] }}</span>
                         <span class="font-semibold truncate">{{ $meta['label'] }}</span>
                     </div>
@@ -107,14 +107,14 @@
             <div class="relative z-10 mt-8">
                 <div class="flex items-center justify-between">
                     @foreach($stages as $i => $stage)
-                    <div class="flex items-center {{ $loop->last ? '' : 'flex-1' }}">
+                    <div class="flex items-center {{ $loop->last ? '' : 'flex-1' }}" data-stage="{{ $stage['key'] }}">
                         @php
                         $isCompleted = in_array($stage['key'], $completedStages);
                         $isCurrent = ($currentIdx !== null && $i === $currentIdx && $status !== 'delivered');
                         $isDelivered = ($status === 'delivered' && $stage['key'] === 'delivered');
                         @endphp
 
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 transition-all duration-300
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 transition-all duration-300 step-circle
                 @if($isCompleted || $isDelivered) bg-emerald-500 border-emerald-400 text-white
                 @elseif($isCurrent) bg-white border-white text-indigo-700 shadow-xl
                 @else bg-white/20 border-white/40 text-white/70 @endif">
@@ -132,7 +132,7 @@
                         </div>
 
                         @if(!$loop->last)
-                        <div class="flex-1 h-1 mx-3 rounded-full transition-all duration-300
+                        <div class="flex-1 h-1 mx-3 rounded-full transition-all duration-300 step-connector
                 @if($isCompleted || ($status === 'delivered' && $i < 3)) bg-emerald-400 @else bg-white/30 @endif">
                         </div>
                         @endif
@@ -501,22 +501,39 @@
                     </div>
                     @endif
 
-                    {{-- Upload Proof for Transfer --}}
-                    @if ($order->payment->method === 'transfer' && $order->payment->status === 'pending')
+                    {{-- Upload Proof for Transfer/Manual --}}
+                    @if (in_array($order->payment->method, ['transfer', 'manual']) && $order->payment->status === 'pending')
                     <div
                         class="mt-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
                         @if (!$order->payment->proof_image)
-                        <h4 class="font-semibold text-blue-900 mb-4">Upload Bukti Transfer</h4>
+                        <h4 class="font-semibold text-blue-900 mb-4">
+                            @if($order->payment->method === 'transfer')
+                                Upload Bukti Transfer
+                            @else
+                                Upload Bukti Pembayaran
+                            @endif
+                        </h4>
                         <div class="bg-white p-4 rounded-xl border mb-4 text-sm">
-                            <div class="font-semibold text-gray-900 mb-2">💳 Bank BCA</div>
-                            <div class="space-y-1 text-gray-700">
-                                <p>No. Rekening: <span class="font-mono bg-gray-100 px-1 rounded">1234567890</span>
-                                </p>
-                                <p>Atas Nama: <span class="font-medium">Green Fresh Store</span></p>
-                                <p class="text-lg font-bold text-green-600 mt-2">
-                                    Rp {{ number_format($order->total_amount, 0, ',', '.') }}
-                                </p>
-                            </div>
+                            @if($order->payment->method === 'transfer')
+                                <div class="font-semibold text-gray-900 mb-2">💳 Bank BCA</div>
+                                <div class="space-y-1 text-gray-700">
+                                    <p>No. Rekening: <span class="font-mono bg-gray-100 px-1 rounded">1234567890</span>
+                                    </p>
+                                    <p>Atas Nama: <span class="font-medium">Green Fresh Store</span></p>
+                                    <p class="text-lg font-bold text-green-600 mt-2">
+                                        Rp {{ number_format($order->total_amount, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            @else
+                                <div class="font-semibold text-gray-900 mb-2">🏦 Bank BSI</div>
+                                <div class="space-y-1 text-gray-700">
+                                    <p>No. Rekening: <span class="font-mono bg-gray-100 px-1 rounded">7254348273</span></p>
+                                    <p>Atas Nama: <span class="font-medium">Green Fresh Store</span></p>
+                                    <p class="text-lg font-bold text-green-600 mt-2">
+                                        Rp {{ number_format($order->total_amount, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            @endif
                         </div>
                         <form action="{{ route('payments.upload-proof', $order->payment) }}" method="POST"
                             enctype="multipart/form-data">
@@ -590,7 +607,7 @@
                 {{-- Delivery Info --}}
                 @if ($order->delivery)
                 <div
-                    class="bg-white rounded-3xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                    class="bg-white rounded-3xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300 delivery-info">
                     <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-6 flex items-center">
                         <div
                             class="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center mr-3 shadow-md">
@@ -605,7 +622,7 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600 text-sm">Status:</span>
-                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-xl text-sm font-medium">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-xl text-sm font-medium delivery-status">
                                 {{ $order->delivery->status_label }}
                             </span>
                         </div>
@@ -731,8 +748,171 @@
     </div>
 </div>
 
+{{-- Real-time Status Polling Scripts --}}
 <script>
     let currentRating = 0;
+    let pollingInterval = null;
+    let lastKnownStatus = '{{ $order->delivery ? $order->delivery->status : "" }}';
+    let isPolling = false;
+
+    // Initialize real-time polling untuk delivery status updates
+    function initializeStatusPolling() {
+        // Start polling every 3 seconds
+        pollingInterval = setInterval(checkDeliveryStatus, 3000);
+        console.log('Real-time status polling initialized for order {{ $order->order_number }}');
+    }
+
+    // Check delivery status via AJAX
+    function checkDeliveryStatus() {
+        if (isPolling) return; // Prevent multiple concurrent requests
+        
+        isPolling = true;
+        
+        fetch('/orders/{{ $order->id }}/delivery-status', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status && data.status !== lastKnownStatus) {
+                console.log('Delivery status changed:', data);
+                updateDeliveryStatusUI(data);
+                showStatusUpdateNotification(`Status berubah menjadi: ${data.status_label}`);
+                lastKnownStatus = data.status;
+            }
+        })
+        .catch(error => {
+            console.error('Error checking delivery status:', error);
+        })
+        .finally(() => {
+            isPolling = false;
+        });
+    }
+
+    // Update UI elements when delivery status changes
+    function updateDeliveryStatusUI(data) {
+        const statusLabel = data.status_label;
+        const status = data.status;
+        
+        // Update status badge in header
+        const statusBadge = document.querySelector('.status-badge');
+        if (statusBadge) {
+            statusBadge.textContent = statusLabel;
+            
+            // Clear existing color classes
+            statusBadge.classList.remove('bg-blue-500/90', 'bg-yellow-500/90', 'bg-purple-500/90', 'bg-green-500/90', 'bg-red-500/90', 'bg-gray-500/90');
+            
+            // Add appropriate background color based on status
+            const statusColors = {
+                'assigned': 'bg-blue-500/90',
+                'picked_up': 'bg-yellow-500/90',
+                'in_transit': 'bg-purple-500/90',
+                'delivered': 'bg-green-500/90',
+                'failed': 'bg-red-500/90'
+            };
+            
+            statusBadge.classList.add(statusColors[status] || 'bg-gray-500/90');
+        }
+        
+        // Update progress stepper
+        updateProgressStepper(status);
+        
+        // Update delivery info section if exists
+        const deliverySection = document.querySelector('.delivery-info');
+        if (deliverySection) {
+            const statusSpan = deliverySection.querySelector('.delivery-status');
+            if (statusSpan) {
+                statusSpan.textContent = statusLabel;
+            }
+        }
+        
+        // Update last update time
+        const updateTimeElements = document.querySelectorAll('.last-updated');
+        updateTimeElements.forEach(element => {
+            const updateTime = new Date(data.updated_at || new Date()).toLocaleString('id-ID');
+            element.textContent = `Diperbarui: ${updateTime}`;
+        });
+    }
+
+    // Update progress stepper visual
+    function updateProgressStepper(currentStatus) {
+        const stages = ['assigned', 'picked_up', 'in_transit', 'delivered'];
+        const currentIndex = stages.indexOf(currentStatus);
+        
+        stages.forEach((stage, index) => {
+            const stepElement = document.querySelector(`[data-stage="${stage}"]`);
+            if (stepElement) {
+                const circle = stepElement.querySelector('.step-circle');
+                const connector = stepElement.querySelector('.step-connector');
+                
+                if (index <= currentIndex && currentStatus !== 'failed') {
+                    // Completed step
+                    circle?.classList.remove('bg-white/20', 'border-white/40', 'text-white/70');
+                    circle?.classList.add('bg-emerald-500', 'border-emerald-400', 'text-white');
+                    connector?.classList.remove('bg-white/30');
+                    connector?.classList.add('bg-emerald-400');
+                } else if (index === currentIndex && currentStatus !== 'delivered') {
+                    // Current step
+                    circle?.classList.remove('bg-white/20', 'bg-emerald-500');
+                    circle?.classList.add('bg-white', 'border-white', 'text-indigo-700', 'shadow-xl');
+                }
+            }
+        });
+    }
+
+    // Show notification when status updates
+    function showStatusUpdateNotification(message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 transform translate-x-full transition-transform duration-300 max-w-sm';
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-gray-900">Status Pengiriman Diperbarui</h4>
+                    <p class="text-sm text-gray-600 mt-1">${message}</p>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-400 hover:text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeStatusPolling();
+    });
+
+    // Clean up when page unloads
+    window.addEventListener('beforeunload', function() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+    });
 
     function openReviewModal(productId, productName) {
         document.getElementById('review_product_id').value = productId;

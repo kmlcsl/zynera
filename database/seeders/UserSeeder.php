@@ -12,8 +12,8 @@ class UserSeeder extends Seeder
     {
         // Admin user
         $admin = User::create([
-            'name' => 'Admin AgriConnect',
-            'email' => 'admin@agriconnect.click',
+            'name' => 'Admin Zynera',
+            'email' => 'admin@Zynera.click',
             'password' => Hash::make('admin123'),
             'user_type' => 'admin',
             'is_verified' => true,
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
         // Sample producer
         $producer = User::create([
             'name' => 'Petani Aceh',
-            'email' => 'petani@agriconnect.click',
+            'email' => 'petani@Zynera.click',
             'password' => Hash::make('petani123'),
             'user_type' => 'produsen',
             'phone' => '081234567890',
@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
         // Sample courier
         $courier = User::create([
             'name' => 'Kurir Gampong',
-            'email' => 'kurir@agriconnect.click',
+            'email' => 'kurir@Zynera.click',
             'password' => Hash::make('kurir123'),
             'user_type' => 'kurir',
             'phone' => '081234567891',
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
 
         $customer = User::create([
             'name' => 'Konsumen Testing',
-            'email' => 'konsumen@agriconnect.click',
+            'email' => 'konsumen@Zynera.click',
             'password' => Hash::make('konsumen123'),
             'user_type' => 'konsumen',
             'phone' => '081234567800',
@@ -58,3 +58,4 @@ class UserSeeder extends Seeder
         $customer->assignRole('konsumen');
     }
 }
+

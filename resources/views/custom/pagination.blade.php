@@ -14,7 +14,7 @@
                         Menampilkan {{ $paginator->firstItem() }} - {{ $paginator->lastItem() }}
                     </p>
                     <p class="text-slate-600 text-xs">
-                        dari {{ number_format($paginator->total()) }} produk AgriConnect
+                        dari {{ number_format($paginator->total()) }} produk Zynera
                     </p>
                 </div>
             </div>
@@ -164,3 +164,4 @@
         </div>
     </nav>
 @endif
+

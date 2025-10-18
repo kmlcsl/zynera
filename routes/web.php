@@ -61,8 +61,43 @@ Route::get('/demo', function () {
     return view('demo');
 })->name('demo');
 
+// Midtrans callback route (no auth required)
+Route::post('/payments/midtrans/notification', [PaymentController::class, 'midtransNotification'])->name('payments.midtrans.notification');
+
+// Manual payment sync for development
+Route::middleware('auth')->post('/payments/{payment}/sync-status', [PaymentController::class, 'syncPaymentStatus'])->name('payments.sync-status');
+
+// Manual order status sync for development
+Route::middleware('auth')->get('/sync-order-status', function() {
+    $ordersToUpdate = App\Models\Order::with('delivery')
+        ->whereHas('delivery', function($query) {
+            $query->where('status', 'delivered');
+        })
+        ->where('status', '!=', 'delivered')
+        ->get();
+
+    $updated = 0;
+    foreach ($ordersToUpdate as $order) {
+        $oldStatus = $order->status;
+        $order->update(['status' => 'delivered']);
+        $updated++;
+    }
+
+    return response()->json([
+        'message' => "Synchronized {$updated} orders",
+        'updated_count' => $updated
+    ]);
+})->name('sync.order.status');
+
 // Authentication routes (dari Laravel Breeze)
 require __DIR__ . '/auth.php';
+
+// CSRF token refresh route
+Route::get('/csrf-token', function () {
+    return response()->json([
+        'csrf_token' => csrf_token()
+    ]);
+})->name('csrf.token');
 
 // Google OTP routes
 Route::get('google/otp/verify', [SocialAuthController::class, 'showGoogleOtpForm'])->name('google.otp.verify');
@@ -113,6 +148,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/tracking', [OrderController::class, 'tracking'])->name('orders.tracking');
     Route::get('/orders/{order}/success', [OrderController::class, 'success'])->name('orders.success');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/delivery-status', [OrderController::class, 'getDeliveryStatus'])->name('orders.delivery-status');
     Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
     // Payment routes
@@ -121,6 +157,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/payments/{payment}/upload-proof', [PaymentController::class, 'uploadProof'])->name('payments.upload-proof');
     Route::get('/payments/{payment}/status', [PaymentController::class, 'checkStatus'])->name('payments.check-status');
     Route::post('/payments/{payment}/simulate-qris', [PaymentController::class, 'simulateQrisPayment'])->name('payments.simulate-qris');
+    Route::post('/payments/{payment}/simulate-midtrans', [PaymentController::class, 'simulateMidtransPayment'])->name('payments.simulate-midtrans');
 
     // Admin only payment routes
     Route::middleware('user.type:admin')->group(function () {

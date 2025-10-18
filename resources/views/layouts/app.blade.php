@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
-    <title>@yield('title', 'AgriConnect - Bahan Makanan Segar Langsung Dari Petani')</title>
+    <title>@yield('title', 'Zynera - Platform Minyak Jelantah Berkualitas')</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpg') }}">
@@ -37,19 +37,19 @@
         }
 
         /* Custom Colors */
-        .agriconnect-primary {
+        .zynera-primary {
             background: linear-gradient(135deg, #10b981, #0d9488);
         }
 
-        .agriconnect-secondary {
+        .zynera-secondary {
             background: linear-gradient(135deg, #059669, #0f766e);
         }
 
-        .text-agriconnect-primary {
+        .text-zynera-primary {
             color: #10b981;
         }
 
-        .text-agriconnect-secondary {
+        .text-zynera-secondary {
             color: #059669;
         }
 
@@ -170,15 +170,15 @@
                         <div class="relative">
                             <div
                                 class="w-12 h-12 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                                <img src="{{ asset('images/logo.jpg') }}" alt="AgriConnect Logo"
+                                <img src="{{ asset('images/logo-zynera-v2.png') }}" alt="Zynera Logo"
                                     class="w-full h-full object-cover">
                             </div>
                             <div class="absolute -top-1 -right-1 w-4 h-4 bg-orange-400 rounded-full animate-pulse">
                             </div>
                         </div>
                         <div>
-                            <span class="text-2xl font-bold gradient-text">AgriConnect</span>
-                            <p class="text-xs text-slate-500 -mt-1">Fresh & Organic</p>
+                            <span class="text-2xl font-bold gradient-text">Zynera</span>
+                            <p class="text-xs text-slate-500 -mt-1">Minyak Jelantah</p>
                         </div>
                     </a>
                 </div>
@@ -191,12 +191,21 @@
                     </a>
                     <a href="{{ route('products.index') }}"
                         class="px-3 lg:px-6 py-3 text-sm lg:text-base text-slate-700 hover:text-emerald-600 font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-50 {{ request()->routeIs('products.*') ? 'nav-active' : '' }}">
-                        <i class="fas fa-shopping-basket mr-1 lg:mr-2"></i>Produk
+                        <i class="fas fa-oil-can mr-1 lg:mr-2"></i>Produk Minyak
                     </a>
-                    <a href="/education"
-                        class="px-3 lg:px-6 py-3 text-sm lg:text-base text-slate-700 hover:text-emerald-600 font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-50 {{ request()->is('education*') ? 'nav-active' : '' }}">
-                        <i class="fas fa-graduation-cap mr-1 lg:mr-2"></i>Edukasi
-                    </a>
+                    @auth
+                        @if(!in_array(Auth::user()->user_type, ['konsumen']))
+                            <a href="/education"
+                                class="px-3 lg:px-6 py-3 text-sm lg:text-base text-slate-700 hover:text-emerald-600 font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-50 {{ request()->is('education*') ? 'nav-active' : '' }}">
+                                <i class="fas fa-leaf mr-1 lg:mr-2"></i>Edukasi Lingkungan
+                            </a>
+                        @endif
+                    @else
+                        <a href="/education"
+                            class="px-3 lg:px-6 py-3 text-sm lg:text-base text-slate-700 hover:text-emerald-600 font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-50 {{ request()->is('education*') ? 'nav-active' : '' }}">
+                            <i class="fas fa-leaf mr-1 lg:mr-2"></i>Edukasi Lingkungan
+                        </a>
+                    @endauth
                     <a href="/about"
                         class="px-3 lg:px-6 py-3 text-sm lg:text-base text-slate-700 hover:text-emerald-600 font-semibold rounded-xl transition-all duration-200 hover:bg-emerald-50 {{ request()->is('about*') ? 'nav-active' : '' }}">
                         <i class="fas fa-info-circle mr-1 lg:mr-2"></i>Tentang Kami
@@ -239,7 +248,7 @@
                                         alt="{{ auth()->user()->name }}"
                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=10b981&color=fff'">
                                 @else
-                                    <div class="w-8 h-8 agriconnect-primary rounded-xl flex items-center justify-center">
+                                    <div class="w-8 h-8 zynera-primary rounded-xl flex items-center justify-center">
                                         <span
                                             class="text-white text-sm font-bold">{{ substr(Auth::user()->name, 0, 1) }}</span>
                                     </div>
@@ -274,7 +283,7 @@
                                                 alt="{{ auth()->user()->name }}">
                                         @else
                                             <div
-                                                class="w-12 h-12 agriconnect-primary rounded-2xl flex items-center justify-center">
+                                                class="w-12 h-12 zynera-primary rounded-2xl flex items-center justify-center">
                                                 <span
                                                     class="text-white font-bold">{{ substr(Auth::user()->name, 0, 1) }}</span>
                                             </div>
@@ -340,7 +349,7 @@
                         </a>
                         <!-- Keep "Daftar" button visible on all screen sizes -->
                         <a href="{{ route('register') }}"
-                            class="agriconnect-primary text-white px-4 md:px-6 py-3 rounded-2xl hover:shadow-lg font-semibold transition-all duration-200 transform hover:-translate-y-1 {{ request()->routeIs('register') ? 'shadow-lg' : '' }}">
+                            class="zynera-primary text-white px-4 md:px-6 py-3 rounded-2xl hover:shadow-lg font-semibold transition-all duration-200 transform hover:-translate-y-1 {{ request()->routeIs('register') ? 'shadow-lg' : '' }}">
                             Daftar
                         </a>
                     @endauth
@@ -377,10 +386,19 @@
                     class="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 font-medium transition-all duration-200 {{ request()->routeIs('products.*') ? 'nav-active-mobile' : '' }}">
                     <i class="fas fa-shopping-basket mr-3 w-5"></i>Produk
                 </a>
-                <a href="/education"
-                    class="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 font-medium transition-all duration-200 {{ request()->is('education*') ? 'nav-active-mobile' : '' }}">
-                    <i class="fas fa-graduation-cap mr-3 w-5"></i>Edukasi
-                </a>
+                @auth
+                    @if(!in_array(Auth::user()->user_type, ['konsumen']))
+                        <a href="/education"
+                            class="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 font-medium transition-all duration-200 {{ request()->is('education*') ? 'nav-active-mobile' : '' }}">
+                            <i class="fas fa-leaf mr-3 w-5"></i>Edukasi Lingkungan
+                        </a>
+                    @endif
+                @else
+                    <a href="/education"
+                        class="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 font-medium transition-all duration-200 {{ request()->is('education*') ? 'nav-active-mobile' : '' }}">
+                        <i class="fas fa-leaf mr-3 w-5"></i>Edukasi Lingkungan
+                    </a>
+                @endauth
                 <a href="/about"
                     class="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 font-medium transition-all duration-200 {{ request()->is('about*') ? 'nav-active-mobile' : '' }}">
                     <i class="fas fa-info-circle mr-3 w-5"></i>Tentang Kami
@@ -491,17 +509,17 @@
                 <div class="col-span-2 lg:col-span-2">
                     <div class="flex items-center space-x-3 mb-6">
                         <div
-                            class="w-12 h-12 agriconnect-primary rounded-2xl flex items-center justify-center shadow-lg">
-                            <span class="text-white text-lg font-bold">🌿</span>
+                            class="w-12 h-12 zynera-primary rounded-2xl flex items-center justify-center shadow-lg">
+                            <span class="text-white text-lg font-bold">🔥</span>
                         </div>
                         <div>
-                            <span class="text-2xl font-bold text-white">AgriConnect</span>
-                            <p class="text-sm text-slate-400">Fresh & Organic</p>
+                            <span class="text-2xl font-bold text-white">Zynera</span>
+                            <p class="text-sm text-slate-400">Minyak Jelantah</p>
                         </div>
                     </div>
                     <p class="text-slate-300 text-lg leading-relaxed mb-6">
-                        Platform e-commerce terdepan untuk bahan makanan segar berkualitas premium,
-                        menghubungkan petani lokal dengan konsumen cerdas di seluruh Indonesia.
+                        Platform marketplace terdepan untuk minyak jelantah berkualitas tinggi,
+                        menghubungkan supplier minyak bekas dengan pembeli yang peduli lingkungan.
                     </p>
                     <div class="flex space-x-4">
                         <a href="#"
@@ -537,7 +555,7 @@
                             <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
                                 <i class="fas fa-envelope text-sm"></i>
                             </div>
-                            <span class="text-slate-300">info@agriconnect.click</span>
+                            <span class="text-slate-300">info@zynera.com</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
@@ -552,7 +570,7 @@
             <!-- Bottom Section -->
             <div class="border-t border-slate-800 pt-8">
                 <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-slate-400 text-sm">&copy; 2024 AgriConnect. Semua hak dilindungi undang-undang.</p>
+                    <p class="text-slate-400 text-sm">&copy; 2024 Zynera. Semua hak dilindungi undang-undang.</p>
                     <div class="flex space-x-6 mt-4 md:mt-0">
                         <a href="#"
                             class="text-slate-400 hover:text-emerald-400 text-sm transition-colors">Kebijakan

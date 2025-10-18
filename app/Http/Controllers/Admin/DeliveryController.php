@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\User;
+use App\Events\DeliveryStatusUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -189,6 +190,8 @@ class DeliveryController extends Controller
             }
         }
 
+        $oldStatus = $delivery->status;
+        
         $delivery->update([
             'courier_id' => $request->courier_id,
             'notes' => $request->notes,
@@ -197,6 +200,19 @@ class DeliveryController extends Controller
 
         // Update timestamps based on status
         $this->updateStatusTimestamps($delivery, $request->status);
+        
+        // Broadcast real-time update if status changed
+        if ($oldStatus !== $request->status) {
+            event(new DeliveryStatusUpdated($delivery, $oldStatus, $request->status));
+            
+            Log::info("Delivery status updated via form and broadcasted", [
+                'delivery_id' => $delivery->id,
+                'order_id' => $delivery->order_id,
+                'old_status' => $oldStatus,
+                'new_status' => $request->status,
+                'user_id' => $delivery->order->user_id
+            ]);
+        }
 
         return redirect()->route('admin.deliveries.show', $delivery)
             ->with('success', 'Pengiriman berhasil diperbarui');
@@ -266,9 +282,25 @@ class DeliveryController extends Controller
         $delivery->update(['status' => $newStatus]);
         $this->updateStatusTimestamps($delivery, $newStatus);
 
+        // Broadcast real-time update
+        event(new DeliveryStatusUpdated($delivery, $oldStatus, $newStatus));
+        
+        Log::info("Delivery status updated and broadcasted", [
+            'delivery_id' => $delivery->id,
+            'order_id' => $delivery->order_id,
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'user_id' => $delivery->order->user_id
+        ]);
+
         return response()->json([
             'success' => true,
-            'message' => "Status pengiriman berhasil diubah menjadi " . $delivery->status_label
+            'message' => "Status pengiriman berhasil diubah menjadi " . $delivery->status_label,
+            'delivery' => [
+                'status' => $newStatus,
+                'status_label' => $delivery->status_label,
+                'updated_at' => $delivery->updated_at->toISOString()
+            ]
         ]);
     }
 

@@ -10,7 +10,7 @@
 @endsection
 @section('page-description')
     @if (auth()->user()->user_type === 'admin')
-        Analisis performa keseluruhan platform AgriConnect
+        Analisis performa keseluruhan platform Zynera
     @else
         Analisis performa penjualan dan stok produk Anda
     @endif
@@ -324,3 +324,4 @@
         }
     </script>
 @endsection
+

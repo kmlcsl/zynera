@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang Kami - AgriConnect')
+@section('title', 'Tentang Kami - Zynera')
 
 @section('content')
     <!-- Hero Section -->
@@ -15,21 +15,20 @@
                 <div
                     class="inline-flex items-center bg-white/80 backdrop-blur-sm border border-emerald-200 rounded-full px-6 py-3 mb-6 shadow-lg">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full mr-3 animate-pulse"></span>
-                    <span class="text-sm font-semibold text-emerald-700">🌾 Tentang AgriConnect</span>
+                    <span class="text-sm font-semibold text-emerald-700">⚡ Tentang Zynera</span>
                 </div>
 
                 <!-- Main Title -->
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                     <span class="block text-slate-800">Menghubungkan</span>
                     <span
-                        class="block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">Petani
+                        class="block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">Produsen
                         & Konsumen</span>
                 </h1>
 
                 <!-- Subtitle -->
                 <p class="text-xl lg:text-2xl text-slate-600 mb-8 leading-relaxed max-w-3xl mx-auto">
-                    Platform e-commerce yang menghubungkan petani lokal dengan konsumen untuk produk segar berkualitas
-                    premium.
+                    Platform distribusi energi terbarukan yang menghubungkan produsen energi dengan konsumen untuk akses energi bersih yang terpercaya dan efisien.
                 </p>
             </div>
         </div>
@@ -40,19 +39,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-emerald-600 mb-2">100+</div>
-                    <div class="text-slate-600">Petani Mitra</div>
+                    <div class="text-4xl font-bold text-emerald-600 mb-2">{{ $produsenEnergi }}+</div>
+                    <div class="text-slate-600">Produsen Energi</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-teal-600 mb-2">150+</div>
+                    <div class="text-4xl font-bold text-teal-600 mb-2">{{ $konsumenAktif }}+</div>
                     <div class="text-slate-600">Konsumen Aktif</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-cyan-600 mb-2">500+</div>
-                    <div class="text-slate-600">Produk Terjual</div>
+                    <div class="text-4xl font-bold text-cyan-600 mb-2">{{ $totalOrders }}+</div>
+                    <div class="text-slate-600">Transaksi Berhasil</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-orange-600 mb-2">10</div>
+                    <div class="text-4xl font-bold text-orange-600 mb-2">{{ $wilayahDilayani }}+</div>
                     <div class="text-slate-600">Wilayah Dilayani</div>
                 </div>
             </div>
@@ -65,33 +64,21 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <!-- Content -->
                 <div>
-                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-6">Tentang AgriConnect</h2>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-6">Tentang Zynera</h2>
                     <div class="space-y-6 text-lg text-slate-600 leading-relaxed">
                         <p>
-                            <strong class="text-emerald-600">AgriConnect</strong> adalah platform e-commerce yang didirikan
-                            pada tahun 2024
-                            untuk menghubungkan petani lokal dengan konsumen di seluruh Indonesia.
+                            <strong class="text-emerald-600">Zynera</strong> adalah platform distribusi energi terbarukan yang menghubungkan produsen energi dengan konsumen untuk menciptakan akses energi bersih yang mudah dan efisien.
                         </p>
                         <p>
-                            Kami menyediakan akses mudah ke produk segar berkualitas premium langsung dari petani,
-                            dengan harga yang adil dan transparan untuk semua pihak.
-                        </p>
-                        <p>
-                            Melalui teknologi digital yang inovatif, kami membangun ekosistem pertanian berkelanjutan
-                            yang menguntungkan petani, konsumen, dan lingkungan.
+                            Melalui teknologi digital yang inovatif, kami membangun ekosistem energi berkelanjutan dengan transparansi penuh dalam setiap proses distribusi dan harga yang adil untuk semua pihak.
                         </p>
                     </div>
                 </div>
 
                 <!-- Visual -->
                 <div class="relative">
-                    <div
-                        class="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-3xl h-96 flex items-center justify-center shadow-2xl">
-                        <div class="text-center text-white">
-                            <span class="text-8xl mb-4 block">🌾</span>
-                            <h3 class="text-2xl font-bold">Sejak 2024</h3>
-                            <p class="text-emerald-100">Melayani Indonesia</p>
-                        </div>
+                    <div class="rounded-3xl h-96 shadow-2xl overflow-hidden">
+                        <img src="{{ asset('images/bg.jpg') }}" alt="Zynera Energy Platform" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
@@ -106,6 +93,22 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Vision -->
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl p-8 lg:p-12">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mr-4">
+                            <span class="text-2xl text-white">👁️</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">Visi Kami</h3>
+                    </div>
+                    <div class="space-y-4 text-slate-700">
+                        <div class="flex items-start">
+                            <span class="text-blue-500 mr-3 mt-1">⚡</span>
+                            <p class="text-lg font-semibold">Platform distribusi energi terbarukan yang terpercaya dan efisien</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Mission -->
                 <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 lg:p-12">
                     <div class="flex items-center mb-6">
@@ -117,41 +120,23 @@
                     <div class="space-y-4 text-slate-700">
                         <div class="flex items-start">
                             <span class="text-emerald-500 mr-3 mt-1">✓</span>
-                            <p>Menghubungkan petani dan UMKM dengan pasar urban melalui sistem e-commerce yang mudah diakses
-                                dan efisien</p>
+                            <p>Menghubungkan produsen energi dengan konsumen</p>
                         </div>
                         <div class="flex items-start">
                             <span class="text-emerald-500 mr-3 mt-1">✓</span>
-                            <p>Mengembangkan sistem logistik desa berbasis kemitraan lokal untuk mempercepat distribusi dan
-                                menekan biaya transportasi</p>
+                            <p>Memudahkan akses energi bersih untuk semua</p>
                         </div>
                         <div class="flex items-start">
                             <span class="text-emerald-500 mr-3 mt-1">✓</span>
-                            <p>Menyediakan fitur edukasi digital bagi pelaku usaha pangan agar mampu bersaing di era
-                                teknologi</p>
+                            <p>Transparansi dan efisiensi dalam distribusi</p>
                         </div>
                         <div class="flex items-start">
                             <span class="text-emerald-500 mr-3 mt-1">✓</span>
-                            <p>Mengintegrasikan konsep keberlanjutan melalui fitur seperti jejak karbon dan harga adil
-                                real-time</p>
+                            <p>Mendukung pertumbuhan industri energi terbarukan</p>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Vision -->
-                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl p-8 lg:p-12">
-                    <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mr-4">
-                            <span class="text-2xl text-white">👁️</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-slate-800">Visi Kami</h3>
-                    </div>
-                    <div class="space-y-4 text-slate-700">
                         <div class="flex items-start">
-                            <span class="text-blue-500 mr-3 mt-1">★</span>
-                            <p>Menjadi platform e-commerce agribisnis terdepan di Indonesia yang memperkuat ekosistem pangan
-                                lokal berbasis teknologi, memberdayakan petani dan UMKM, serta memperpendek rantai pasok
-                                pangan secara berkelanjutan</p>
+                            <span class="text-emerald-500 mr-3 mt-1">✓</span>
+                            <p>Inovasi teknologi platform berkelanjutan</p>
                         </div>
                     </div>
                 </div>
@@ -159,70 +144,12 @@
         </div>
     </section>
 
-    <!-- Our Values -->
-    <section class="py-20 bg-gradient-to-br from-slate-50 to-emerald-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">Nilai-Nilai Kami</h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Value 1 -->
-                <div class="bg-white rounded-3xl p-8 shadow-lg text-center hover:shadow-xl transition-all duration-300">
-                    <div
-                        class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                        <span class="text-2xl text-white">🤝</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Transparansi</h3>
-                    <p class="text-slate-600 text-sm">
-                        Informasi yang jelas dan honest mengenai produk dan harga di platform kami.
-                    </p>
-                </div>
-
-                <!-- Value 2 -->
-                <div class="bg-white rounded-3xl p-8 shadow-lg text-center hover:shadow-xl transition-all duration-300">
-                    <div
-                        class="w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                        <span class="text-2xl text-white">⚡</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Kualitas</h3>
-                    <p class="text-slate-600 text-sm">
-                        Produk yang telah melalui seleksi ketat untuk memastikan kesegaran terbaik.
-                    </p>
-                </div>
-
-                <!-- Value 3 -->
-                <div class="bg-white rounded-3xl p-8 shadow-lg text-center hover:shadow-xl transition-all duration-300">
-                    <div
-                        class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                        <span class="text-2xl text-white">🌱</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Keberlanjutan</h3>
-                    <p class="text-slate-600 text-sm">
-                        Mendukung praktik pertanian ramah lingkungan dan berkelanjutan.
-                    </p>
-                </div>
-
-                <!-- Value 4 -->
-                <div class="bg-white rounded-3xl p-8 shadow-lg text-center hover:shadow-xl transition-all duration-300">
-                    <div
-                        class="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                        <span class="text-2xl text-white">💡</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Inovasi</h3>
-                    <p class="text-slate-600 text-sm">
-                        Terus berinovasi dengan teknologi untuk pengalaman terbaik.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Why Choose Us -->
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">Mengapa Memilih AgriConnect?</h2>
+                <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">Mengapa Memilih Zynera?</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -307,45 +234,5 @@
         </div>
     </section>
 
-    <!-- Call to Action -->
-    <section class="py-20 bg-gradient-to-br from-slate-50 to-emerald-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-12 text-white">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-6">Bergabunglah dengan AgriConnect!</h2>
-                <p class="text-xl text-emerald-100 mb-8 leading-relaxed">
-                    Dapatkan produk segar berkualitas langsung dari petani atau mulai jual hasil panen Anda dengan mudah.
-                </p>
-
-                <!-- CTA Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-                    <a href="{{ route('register') }}"
-                        class="bg-white text-emerald-600 px-8 py-4 rounded-2xl text-lg font-bold hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                        🚀 Daftar Sekarang
-                    </a>
-                    <a href="{{ route('products.index') }}"
-                        class="bg-emerald-700 text-white px-8 py-4 rounded-2xl text-lg font-bold border-2 border-emerald-400 hover:bg-emerald-600 transition-all duration-300">
-                        🛒 Mulai Belanja
-                    </a>
-                </div>
-
-                <!-- Contact Info -->
-                <div class="pt-8 border-t border-emerald-400">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="text-center">
-                            <div class="text-2xl mb-2">📧</div>
-                            <p class="text-emerald-100">info@agriconnect.click</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl mb-2">📞</div>
-                            <p class="text-emerald-100">+62 822-9706-7565</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl mb-2">📍</div>
-                            <p class="text-emerald-100">Aceh, Indonesia</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 @endsection
+

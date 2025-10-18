@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\Payment;
 use App\Models\Delivery;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,8 +29,8 @@ class OrderController extends Controller
      */
     public function checkout(Request $request)
     {
-        // Get all cart items for current user
-        $allCarts = Cart::with(['product.category', 'product.user'])
+        // Get all cart items for current user with product origin information
+        $allCarts = Cart::with(['product.category', 'product.user', 'product.village'])
             ->where('user_id', Auth::id())
             ->get();
 
@@ -83,13 +84,28 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            // Validate based on shipping method
+            $validationRules = [
                 'recipient_name' => 'required|string|max:255',
                 'recipient_phone' => 'required|string|max:20',
-                'shipping_address' => 'required|string|max:1000',
-                'payment_method' => 'required|in:cod,transfer,qris',
+                'shipping_method' => 'required|in:pickup,courier',
+                'payment_method' => 'required|in:manual,midtrans',
                 'notes' => 'nullable|string|max:500'
-            ]);
+            ];
+            
+            // Require proof image for manual payment
+            if ($request->payment_method === 'manual') {
+                $validationRules['proof_image'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+            }
+            
+            // Only require shipping address for courier method
+            if ($request->shipping_method === 'courier') {
+                $validationRules['shipping_address'] = 'required|string|max:1000';
+            } else {
+                $validationRules['shipping_address'] = 'nullable|string|max:1000';
+            }
+            
+            $request->validate($validationRules);
 
             // Get cart items
             $carts = Cart::with('product')
@@ -120,7 +136,8 @@ class OrderController extends Controller
                 return $cart->product->price * $cart->quantity;
             });
 
-            $shippingCost = 5000;
+            // Determine shipping cost based on method
+            $shippingCost = $request->shipping_method === 'pickup' ? 0 : 5000;
             $serviceFee = $subtotal * 0.02; // 2% service fee on subtotal only
             $totalAmount = $subtotal + $serviceFee + $shippingCost;
             $totalItems = $carts->sum('quantity');
@@ -133,10 +150,11 @@ class OrderController extends Controller
                 'subtotal' => $subtotal,
                 'service_fee' => $serviceFee,
                 'shipping_cost' => $shippingCost,
+                'shipping_method' => $request->shipping_method,
                 'total_items' => $totalItems,
                 'recipient_name' => $request->recipient_name,
                 'recipient_phone' => $request->recipient_phone,
-                'shipping_address' => $request->shipping_address,
+                'shipping_address' => $request->shipping_method === 'pickup' ? null : $request->shipping_address,
                 'notes' => $request->notes,
                 'status' => Order::STATUS_PENDING
             ]);
@@ -156,41 +174,97 @@ class OrderController extends Controller
                 $cart->product->decrement('stock', $cart->quantity);
             }
 
+            // Handle proof image upload for manual payment
+            $proofImagePath = null;
+            if ($request->payment_method === 'manual' && $request->hasFile('proof_image')) {
+                $proofImage = $request->file('proof_image');
+                $fileName = 'payment_proof_' . $order->order_number . '_' . time() . '.' . $proofImage->getClientOriginalExtension();
+                $proofImagePath = $proofImage->storeAs('payment_proofs', $fileName, 'public');
+            }
+            
             // Create payment record
-            $payment = Payment::create([
+            $paymentData = [
                 'order_id' => $order->id,
                 'method' => $request->payment_method,
                 'amount' => $totalAmount,
                 'status' => Payment::STATUS_PENDING
-            ]);
+            ];
+            
+            // Add manual payment specific data
+            if ($request->payment_method === 'manual') {
+                $paymentData['proof_image'] = $proofImagePath;
+                $paymentData['bank_name'] = 'Bank Syariah Indonesia (BSI)';
+                $paymentData['account_number'] = '7254348273';
+                $paymentData['account_holder'] = 'Zynera Market';
+            }
+            
+            $payment = Payment::create($paymentData);
 
-            if ($request->payment_method === 'cod') {
-                // COD: Mark payment as paid and create delivery
-                $payment->markAsPaid('COD_' . $order->order_number);
+            if ($request->payment_method === 'midtrans') {
+                // Midtrans: Create payment URL and redirect
+                $midtransService = new MidtransService();
+                $snapUrl = $midtransService->createSnapToken($order);
+                
+                if ($snapUrl) {
+                    // Store snap URL in payment for later use
+                    $payment->update(['reference_number' => $snapUrl]);
+                    
+                    Delivery::create([
+                        'order_id' => $order->id,
+                        'status' => Delivery::STATUS_ASSIGNED,
+                        'assigned_at' => now(),
+                        'notes' => 'Menunggu pembayaran Midtrans dan assignment kurir'
+                    ]);
+                    
+                    DB::commit();
+                    
+                    // Clear cart untuk item yang sudah di-checkout
+                    Cart::where('user_id', Auth::id())->delete();
+                    
+                    // Redirect to Midtrans payment page
+                    return redirect($snapUrl);
+                } else {
+                    // Midtrans failed, rollback
+                    DB::rollBack();
+                    return redirect()->route('cart.index')
+                        ->with('error', 'Gagal membuat link pembayaran Midtrans. Silahkan coba lagi.');
+                }
             } else {
-                // Non-COD: Create delivery record untuk tracking (menunggu payment)
+                // Manual: Menunggu upload bukti pembayaran
                 Delivery::create([
                     'order_id' => $order->id,
                     'status' => Delivery::STATUS_ASSIGNED,
                     'assigned_at' => now(),
-                    'notes' => 'Menunggu konfirmasi pembayaran dan assignment kurir'
+                    'notes' => 'Menunggu upload bukti pembayaran dan assignment kurir'
                 ]);
+                
+                DB::commit();
+                
+                // Clear cart untuk item yang sudah di-checkout
+                Cart::where('user_id', Auth::id())->delete();
+                
+                return redirect()->route('orders.success', ['order' => $order->id])
+                    ->with('success', 'Pesanan berhasil dibuat! Silahkan lakukan pembayaran manual.');
             }
-
-            DB::commit();
-
-            // Clear cart untuk item yang sudah di-checkout
-            Cart::where('user_id', Auth::id())->delete();
-
-            return redirect()->route('orders.success', ['order' => $order->id])
-                ->with('success', 'Pesanan berhasil dibuat! Silahkan lakukan pembayaran.');
         } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::error('Order validation failed', [
+                'user_id' => Auth::id(),
+                'errors' => $e->errors(),
+                'request' => $request->all()
+            ]);
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Order creation failed', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
 
             return redirect()->route('cart.index')
-                ->with('error', 'Terjadi kesalahan saat membuat pesanan. Silahkan coba lagi.');
+                ->with('error', 'Terjadi kesalahan saat membuat pesanan: ' . $e->getMessage());
         }
     }
 
@@ -244,9 +318,11 @@ class OrderController extends Controller
                 ->with('error', 'Anda tidak memiliki akses untuk melihat pesanan ini.');
         }
 
-        // Load necessary relationships
+        // Load necessary relationships including product origin and seller info
         $order->load([
-            'orderItems.product',
+            'orderItems.product.category',
+            'orderItems.product.user',
+            'orderItems.product.village',
             'payment',
             'user'
         ]);

@@ -31,7 +31,7 @@ class OrderCreated extends Notification
             ->line('Pesanan baru telah dibuat dengan nomor: ' . $this->order->order_number)
             ->line('Total: Rp ' . number_format($this->order->total_amount, 0, ',', '.'))
             ->action('Lihat Pesanan', route('orders.show', $this->order))
-            ->line('Terima kasih telah berbelanja di AgriConnect!');
+            ->line('Terima kasih telah berbelanja di Zynera!');
     }
 
     public function toArray($notifiable)
@@ -44,3 +44,4 @@ class OrderCreated extends Notification
         ];
     }
 }
+

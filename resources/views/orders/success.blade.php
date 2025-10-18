@@ -191,13 +191,26 @@
                                     <span class="text-gray-900">{{ $order->recipient_phone }}</span>
                                 </div>
                                 <div class="flex">
-                                    <span class="font-medium text-gray-600 w-20">Alamat:</span>
-                                    <span class="text-gray-900">{{ $order->shipping_address }}</span>
+                                    <span class="font-medium text-gray-600 w-20">Metode:</span>
+                                    <span class="text-gray-900">
+                                        {{ $order->shipping_method_label }}
+                                        @if($order->shipping_method === 'pickup')
+                                            <span class="text-green-600 font-semibold">(GRATIS)</span>
+                                        @else
+                                            <span class="text-gray-600">(Rp {{ number_format($order->shipping_cost, 0, ',', '.') }})</span>
+                                        @endif
+                                    </span>
                                 </div>
+                                @if($order->shipping_method === 'courier')
+                                    <div class="flex">
+                                        <span class="font-medium text-gray-600 w-20">Alamat:</span>
+                                        <span class="text-gray-900 leading-relaxed">{{ $order->shipping_address }}</span>
+                                    </div>
+                                @endif
                                 @if ($order->notes)
                                     <div class="flex">
                                         <span class="font-medium text-gray-600 w-20">Catatan:</span>
-                                        <span class="text-gray-900">{{ $order->notes }}</span>
+                                        <span class="text-gray-900 leading-relaxed">{{ $order->notes }}</span>
                                     </div>
                                 @endif
                             </div>
@@ -253,6 +266,78 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Pickup Information (Only show if pickup method) -->
+                    @if($order->shipping_method === 'pickup')
+                        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                            <h3 class="font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                Informasi Lokasi Jemput
+                            </h3>
+                            <div class="space-y-4">
+                                @foreach($order->orderItems as $item)
+                                    <div class="bg-gray-50 rounded-xl p-4">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-12 h-12 bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                                                @if($item->product->main_image_url)
+                                                    <img src="{{ $item->product->main_image_url }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover">
+                                                @else
+                                                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="flex-1">
+                                                <h4 class="font-medium text-gray-800 mb-2">{{ $item->product->name }}</h4>
+                                                <div class="space-y-1 text-sm">
+                                                    @if($item->product->village)
+                                                        <div class="flex items-start gap-2">
+                                                            <svg class="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            </svg>
+                                                            <span class="text-gray-700">{{ $item->product->village->full_path }}</span>
+                                                        </div>
+                                                    @endif
+                                                    @if($item->product->user && $item->product->user->phone)
+                                                        <div class="flex items-center gap-2">
+                                                            <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                                            </svg>
+                                                            <span class="text-gray-700">{{ $item->product->user->phone }}</span>
+                                                            <span class="text-gray-500">({{ $item->product->user->name }})</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                                    <div class="flex items-start gap-3">
+                                        <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <div class="text-sm text-yellow-800">
+                                            <p class="font-medium mb-1">Panduan Pengambilan:</p>
+                                            <ul class="space-y-1 list-disc list-inside">
+                                                <li>Hubungi penjual untuk mengatur waktu pengambilan</li>
+                                                <li>Bawa bukti pesanan (screenshot atau print halaman ini)</li>
+                                                <li>Verifikasi kondisi barang sebelum membawa pulang</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Sidebar -->
@@ -286,6 +371,28 @@
                                     <div
                                         class="bg-yellow-100/20 border border-yellow-300/30 rounded-xl p-3 text-yellow-100 text-sm">
                                         <p>⚠️ Setelah transfer, silahkan upload bukti pembayaran di bawah ini.</p>
+                                    </div>
+                                </div>
+                            @elseif ($order->payment->method === 'midtrans')
+                                <div class="space-y-4">
+                                    <p class="text-blue-100">Pembayaran melalui Midtrans berhasil dibuat!</p>
+                                    <div
+                                        class="bg-white/20 backdrop-blur-sm p-4 rounded-xl border border-white/30 text-center">
+                                        <p class="font-bold text-lg mb-2">Status: Menunggu Konfirmasi</p>
+                                        <p class="text-sm">Midtrans akan mengkonfirmasi pembayaran secara otomatis</p>
+                                    </div>
+                                    
+                                    <!-- Real Midtrans Sync Button -->
+                                    <div class="text-center pt-2">
+                                        <form action="{{ route('payments.sync-status', $order->payment) }}"
+                                            method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit"
+                                                class="bg-white/20 hover:bg-white/30 border border-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                                🔄 Sync Status dengan Midtrans
+                                            </button>
+                                        </form>
+                                        <p class="text-xs text-blue-100 mt-2">Klik untuk sinkronisasi status pembayaran dari Midtrans</p>
                                     </div>
                                 </div>
                             @elseif ($order->payment->method === 'qris')
@@ -322,11 +429,29 @@
                                         </form>
                                     </div>
                                 </div>
+                            @elseif ($order->payment->method === 'manual')
+                                <div class="space-y-4">
+                                    <p class="text-blue-100">Lakukan pembayaran secara manual sesuai instruksi:</p>
+                                    <div class="bg-white/20 backdrop-blur-sm p-4 rounded-xl border border-white/30">
+                                        <div class="space-y-2">
+                                            <p class="font-bold">🏦 Bank BSI</p>
+                                            <p>No. Rekening: <span class="font-mono bg-white/20 px-2 py-1 rounded">7254348273</span></p>
+                                            <p>Atas Nama: <span class="font-medium">Green Fresh Store</span></p>
+                                            <p class="text-lg font-bold border-t border-white/30 pt-2 mt-2">
+                                                💰 Rp {{ number_format($order->total_amount, 0, ',', '.') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="bg-yellow-100/20 border border-yellow-300/30 rounded-xl p-3 text-yellow-100 text-sm">
+                                        <p>⚠️ Setelah pembayaran, silahkan upload bukti pembayaran di bawah ini.</p>
+                                    </div>
+                                </div>
                             @endif
                         </div>
 
                         <!-- Upload Bukti Pembayaran -->
-                        @if ($order->payment->method === 'transfer')
+                        @if (in_array($order->payment->method, ['transfer', 'manual']))
                             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                                 <h3 class="font-bold text-gray-900 mb-4 flex items-center">
                                     <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor"
@@ -497,8 +622,8 @@
             }
         });
 
-        // Auto check payment status for QRIS (polling every 10 seconds)
-        @if ($order->payment && $order->payment->method === 'qris' && $order->payment->status === 'pending')
+        // Auto check payment status for QRIS and Midtrans (polling every 10 seconds)
+        @if ($order->payment && in_array($order->payment->method, ['qris', 'midtrans']) && $order->payment->status === 'pending')
             setInterval(function() {
                 fetch('{{ route('payments.check-status', $order->payment) }}')
                     .then(response => response.json())

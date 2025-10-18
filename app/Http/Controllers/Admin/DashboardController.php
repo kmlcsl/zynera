@@ -46,7 +46,7 @@ class DashboardController extends Controller
         $titles = [
             'admin' => 'Dashboard Admin',
             'produsen' => 'Dashboard Produsen',
-            'kurir' => 'Dashboard Kurir'
+            'kurir' => 'Dashboard Kurir',
         ];
 
         return $titles[$userType] ?? 'Dashboard';
@@ -55,12 +55,12 @@ class DashboardController extends Controller
     private function getPageDescription($userType)
     {
         $descriptions = [
-            'admin' => 'Ringkasan aktivitas platform AgriConnect',
+            'admin' => 'Ringkasan aktivitas platform Zynera',
             'produsen' => 'Kelola produk dan pesanan Anda',
-            'kurir' => 'Kelola pengiriman dan rute delivery'
+            'kurir' => 'Kelola pengiriman dan rute delivery',
         ];
 
-        return $descriptions[$userType] ?? 'Selamat datang di AgriConnect';
+        return $descriptions[$userType] ?? 'Selamat datang di Zynera';
     }
 
     private function getStatsForUserType($userType, $userId)
@@ -70,7 +70,7 @@ class DashboardController extends Controller
                 return [
                     'total_users' => User::count(),
                     'total_products' => Product::count(),
-                    'total_orders' => Order::count(),
+                    'total_orders' => Order::whereDate('created_at', today())->count(), // ✅ HANYA HARI INI
                     'total_revenue' => Order::where('status', 'delivered')->sum('total_amount'),
                     'pending_orders' => Order::where('status', 'pending')->count(),
                     'active_products' => Product::where('is_active', true)->count(),
@@ -81,7 +81,7 @@ class DashboardController extends Controller
                     'total_admins' => User::where('user_type', 'admin')->count(),
                     // Legacy fields for backward compatibility
                     'producers' => User::where('user_type', 'produsen')->count(),
-                    'couriers' => User::where('user_type', 'kurir')->count()
+                    'couriers' => User::where('user_type', 'kurir')->count(),
                 ];
 
             case 'produsen':
@@ -100,10 +100,12 @@ class DashboardController extends Controller
                 return [
                     'my_products' => Product::where('user_id', $userId)->count(),
                     'active_products' => Product::where('user_id', $userId)->where('is_active', true)->count(),
+                    'incoming_orders' => Order::whereIn('id', $producerOrderIds)
+                        ->whereDate('created_at', today())->count(), // ✅ HANYA HARI INI
                     'my_orders' => Order::whereIn('id', $producerOrderIds)->count(),
                     'my_revenue' => $revenueQuery->sum('total'),
                     'pending_orders' => Order::whereIn('id', $producerOrderIds)->where('status', 'pending')->count(),
-                    'low_stock_products' => Product::where('user_id', $userId)->where('stock', '<=', 10)->count()
+                    'low_stock_products' => Product::where('user_id', $userId)->where('stock', '<=', 10)->count(),
                 ];
 
             case 'kurir':
@@ -114,7 +116,7 @@ class DashboardController extends Controller
                     'pending_deliveries' => Delivery::where('courier_id', $userId)->whereIn('status', ['assigned', 'picked_up', 'in_transit'])->count(),
                     'today_deliveries' => Delivery::where('courier_id', $userId)->whereDate('created_at', today())->count(),
                     'failed_deliveries' => Delivery::where('courier_id', $userId)->where('status', 'failed')->count(),
-                    'delivery_rating' => 4.8 // Calculate average rating when available
+                    'delivery_rating' => 4.8, // Calculate average rating when available
                 ];
 
             default:
@@ -132,7 +134,7 @@ class DashboardController extends Controller
                         ->take(5)
                         ->get(),
                     'recent_users' => User::latest()->take(5)->get(),
-                    'recent_products' => Product::with('user')->latest()->take(5)->get()
+                    'recent_products' => Product::with('user')->latest()->take(5)->get(),
                 ];
 
             case 'produsen':
@@ -147,7 +149,7 @@ class DashboardController extends Controller
                         ->latest()
                         ->take(5)
                         ->get(),
-                    'recent_products' => Product::where('user_id', $userId)->latest()->take(5)->get()
+                    'recent_products' => Product::where('user_id', $userId)->latest()->take(5)->get(),
                 ];
 
             case 'kurir':
@@ -164,7 +166,7 @@ class DashboardController extends Controller
                         ->where('status', 'delivered')
                         ->latest()
                         ->take(5)
-                        ->get()
+                        ->get(),
                 ];
 
             default:
@@ -185,7 +187,7 @@ class DashboardController extends Controller
                         ->withCount('products')
                         ->orderBy('products_count', 'desc')
                         ->take(5)
-                        ->get()
+                        ->get(),
                 ];
 
             case 'produsen':
@@ -199,7 +201,7 @@ class DashboardController extends Controller
                         ->where('stock', '<=', 10)
                         ->orderBy('stock', 'asc')
                         ->take(5)
-                        ->get()
+                        ->get(),
                 ];
 
             case 'kurir':
@@ -231,8 +233,8 @@ class DashboardController extends Controller
                         'on_time_delivery' => $totalDeliveries > 0 ? round(($onTimeDeliveries / $totalDeliveries) * 100) : 0,
                         'customer_rating' => 4.8,
                         'avg_delivery_time' => round($avgDeliveryTime, 1),
-                        'total_deliveries' => $totalDeliveries
-                    ]
+                        'total_deliveries' => $totalDeliveries,
+                    ],
                 ];
 
             default:
@@ -240,3 +242,4 @@ class DashboardController extends Controller
         }
     }
 }
+

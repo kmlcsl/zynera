@@ -24,7 +24,7 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Kode Verifikasi OTP - AgriConnect',
+            subject: 'Kode Verifikasi OTP - Zynera',
         );
     }
 
@@ -35,3 +35,4 @@ class OtpMail extends Mailable
         );
     }
 }
+

@@ -337,14 +337,14 @@
             </div>
 
             <!-- Current Images Display -->
-            @if ($product->images && count($product->images) > 0)
+            @if ($product->has_images)
                 <div class="border-t pt-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Gambar Saat Ini ({{ count($product->images) }}
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Gambar Saat Ini ({{ count($product->image_urls) }}
                         gambar)</h3>
                     <div class="grid grid-cols-4 gap-4">
-                        @foreach ($product->images as $image)
+                        @foreach ($product->image_urls as $imageUrl)
                             <div class="relative">
-                                <img src="{{ asset('storage/' . $image) }}" alt="{{ $product->name }}"
+                                <img src="{{ $imageUrl }}" alt="{{ $product->name }}"
                                     class="w-full h-24 object-cover rounded-lg border border-gray-200">
                                 <div
                                     class="absolute top-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 py-0.5 rounded">

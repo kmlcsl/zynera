@@ -72,7 +72,7 @@ class SocialAuthController extends Controller
         ];
 
         Session::put('temp_google_data', $tempGoogleData);
-        Session::put('temp_google_expires_at', now()->addMinutes(15)); // 15 menit untuk pilih user type
+        Session::put('temp_google_expires_at', now()->addMinutes(60)); // 60 menit untuk pilih user type
 
         return redirect()->route('google.user.type.selection', ['email' => $googleUser->getEmail()])
             ->with('success', 'Halo ' . $googleUser->getName() . '! Silakan pilih tipe akun yang ingin dibuat.');
@@ -124,9 +124,9 @@ class SocialAuthController extends Controller
             ]
         ];
 
-        // Simpan di session dengan expiry (30 menit)
+        // Simpan di session dengan expiry (60 menit)
         Session::put('google_registration_data', $googleRegistrationData);
-        Session::put('google_registration_expires_at', now()->addMinutes(30));
+        Session::put('google_registration_expires_at', now()->addMinutes(60));
 
         // Generate OTP
         $otp = sprintf('%06d', mt_rand(1, 999999));
@@ -160,6 +160,16 @@ class SocialAuthController extends Controller
         // Cek apakah ada data registrasi Google di session
         $googleRegistrationData = Session::get('google_registration_data');
         $expiresAt = Session::get('google_registration_expires_at');
+
+        // Debug logging
+        Log::info('Google OTP Form Access', [
+            'email' => $email,
+            'has_registration_data' => !is_null($googleRegistrationData),
+            'has_expires_at' => !is_null($expiresAt),
+            'expires_at' => $expiresAt ? $expiresAt->toDateTimeString() : null,
+            'now' => now()->toDateTimeString(),
+            'is_expired' => $expiresAt ? now()->greaterThan($expiresAt) : null
+        ]);
 
         if (!$email || !$googleRegistrationData || !$expiresAt || now()->greaterThan($expiresAt)) {
             // Data registrasi tidak ada atau sudah expired
@@ -238,7 +248,7 @@ class SocialAuthController extends Controller
         $user->save();
 
         // Welcome message
-        return $this->redirectAfterLogin($user, 'Selamat datang di AgriConnect! Akun Google Anda telah berhasil dibuat dan diverifikasi.');
+        return $this->redirectAfterLogin($user, 'Selamat datang di Zynera! Akun Google Anda telah berhasil dibuat dan diverifikasi.');
     }
 
     /**
@@ -544,6 +554,16 @@ class SocialAuthController extends Controller
         $tempGoogleData = Session::get('temp_google_data');
         $expiresAt = Session::get('temp_google_expires_at');
 
+        // Debug logging
+        Log::info('Google User Type Selection Access', [
+            'email' => $email,
+            'has_temp_data' => !is_null($tempGoogleData),
+            'has_expires_at' => !is_null($expiresAt),
+            'expires_at' => $expiresAt ? $expiresAt->toDateTimeString() : null,
+            'now' => now()->toDateTimeString(),
+            'is_expired' => $expiresAt ? now()->greaterThan($expiresAt) : null
+        ]);
+
         if (!$email || !$tempGoogleData || !$expiresAt || now()->greaterThan($expiresAt)) {
             Session::forget(['temp_google_data', 'temp_google_expires_at']);
             return redirect()->route('login')
@@ -627,9 +647,9 @@ class SocialAuthController extends Controller
             ]
         ];
 
-        // Simpan di session dengan expiry (30 menit)
+        // Simpan di session dengan expiry (60 menit)
         Session::put('google_registration_data', $googleRegistrationData);
-        Session::put('google_registration_expires_at', now()->addMinutes(30));
+        Session::put('google_registration_expires_at', now()->addMinutes(60));
 
         // Generate OTP
         $otp = sprintf('%06d', mt_rand(1, 999999));
@@ -653,3 +673,4 @@ class SocialAuthController extends Controller
             ->with('success', 'Data berhasil disimpan! Silakan verifikasi email Anda dengan kode OTP untuk melengkapi registrasi sebagai ' . $this->getUserTypeLabel($userType) . '.');
     }
 }
+

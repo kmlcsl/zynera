@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Models\Order;
+use App\Models\Cart;
+use App\Models\Delivery;
 
 class Payment extends Model
 {
@@ -17,6 +20,9 @@ class Payment extends Model
         'status',
         'reference_number',
         'proof_image',
+        'bank_name',
+        'account_number',
+        'account_holder',
         'paid_at'
     ];
 
@@ -29,6 +35,8 @@ class Payment extends Model
     const METHOD_COD = 'cod';
     const METHOD_TRANSFER = 'transfer';
     const METHOD_QRIS = 'qris';
+    const METHOD_MANUAL = 'manual';
+    const METHOD_MIDTRANS = 'midtrans';
 
     // Payment status
     const STATUS_PENDING = 'pending';
@@ -48,7 +56,9 @@ class Payment extends Model
         $labels = [
             self::METHOD_COD => 'Bayar di Tempat (COD)',
             self::METHOD_TRANSFER => 'Transfer Bank',
-            self::METHOD_QRIS => 'QRIS'
+            self::METHOD_QRIS => 'QRIS',
+            self::METHOD_MANUAL => 'Pembayaran Manual',
+            self::METHOD_MIDTRANS => 'Pembayaran Otomatis (Midtrans)'
         ];
 
         return $labels[$this->method] ?? 'Unknown';

@@ -48,19 +48,19 @@
             font-weight: bold;
         }
 
-        .agriconnect-primary {
+        .Zynera-primary {
             background: linear-gradient(135deg, #10b981, #0d9488);
         }
 
-        .agriconnect-secondary {
+        .Zynera-secondary {
             background: linear-gradient(135deg, #059669, #0f766e);
         }
 
-        .text-agriconnect-primary {
+        .text-Zynera-primary {
             color: #10b981;
         }
 
-        .bg-agriconnect-pattern {
+        .bg-Zynera-pattern {
             background-image:
                 radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 75% 75%, rgba(5, 150, 105, 0.1) 0%, transparent 50%);
@@ -134,14 +134,14 @@
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="https://agriconnect.click/images/logo.jpg" alt="AgriConnect Logo" class="logo-img">
-                <div class="logo-text">AgriConnect</div>
+                <img src="https://Zynera.click/images/logo.jpg" alt="Zynera Logo" class="logo-img">
+                <div class="logo-text">Zynera</div>
             </div>
         </div>
 
         <h2>Halo {{ $userName }}!</h2>
 
-        <p>Terima kasih telah mendaftar di AgriConnect. Untuk melengkapi proses pendaftaran, silakan masukkan kode OTP
+        <p>Terima kasih telah mendaftar di Zynera. Untuk melengkapi proses pendaftaran, silakan masukkan kode OTP
             berikut:</p>
 
         <div class="otp-code">
@@ -155,13 +155,14 @@
             <li>Jika Anda tidak merasa mendaftar, abaikan email ini</li>
         </ul>
 
-        <p>Selamat bergabung dengan komunitas AgriConnect!</p>
+        <p>Selamat bergabung dengan komunitas Zynera!</p>
 
         <div class="footer">
             <p>Email ini dikirim otomatis, mohon tidak membalas email ini.</p>
-            <p>&copy; {{ date('Y') }} AgriConnect. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Zynera. All rights reserved.</p>
         </div>
     </div>
 </body>
 
 </html>
+

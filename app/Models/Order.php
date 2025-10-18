@@ -16,6 +16,7 @@ class Order extends Model
         'subtotal',
         'service_fee',
         'shipping_cost',
+        'shipping_method',
         'total_items',
         'status',
         'shipping_address',
@@ -75,9 +76,21 @@ class Order extends Model
 
     public function getStatusLabelAttribute()
     {
+        // Prioritaskan delivery status jika ada
         if ($this->relationLoaded('delivery') && $this->delivery) {
             $delivery = $this->delivery;
 
+            // Jika delivery sudah delivered, tampilkan sebagai selesai
+            if ($delivery->status === 'delivered') {
+                return 'Barang Terkirim';
+            }
+            
+            // Jika delivery gagal
+            if ($delivery->status === 'failed') {
+                return 'Pengiriman Gagal';
+            }
+
+            // Untuk status lain, cek jika ada courier
             if (in_array($this->status, ['paid', 'processing', 'shipped']) && $delivery->courier_id) {
                 switch ($delivery->status) {
                     case 'assigned':
@@ -86,15 +99,11 @@ class Order extends Model
                         return 'Barang Diambil Kurir';
                     case 'in_transit':
                         return 'Dalam Pengiriman';
-                    case 'delivered':
-                        return 'Barang Terkirim';
-                    case 'failed':
-                        return 'Pengiriman Gagal';
                 }
             }
         }
 
-        // Default status labels
+        // Default status labels berdasarkan order status
         $labels = [
             self::STATUS_PENDING => 'Menunggu Pembayaran',
             self::STATUS_PAID => 'Dibayar - Perlu Assign Kurir',
@@ -109,6 +118,20 @@ class Order extends Model
 
     public function getStatusColorAttribute()
     {
+        // Cek delivery status terlebih dahulu
+        if ($this->relationLoaded('delivery') && $this->delivery) {
+            if ($this->delivery->status === 'delivered') {
+                return 'green'; // Hijau untuk delivered
+            }
+            if ($this->delivery->status === 'failed') {
+                return 'red'; // Merah untuk failed
+            }
+            if (in_array($this->delivery->status, ['in_transit', 'picked_up'])) {
+                return 'purple'; // Ungu untuk dalam pengiriman
+            }
+        }
+        
+        // Default colors berdasarkan order status
         $colors = [
             self::STATUS_PENDING => 'yellow',
             self::STATUS_PAID => 'blue',
@@ -119,6 +142,16 @@ class Order extends Model
         ];
 
         return $colors[$this->status] ?? 'gray';
+    }
+
+    public function getShippingMethodLabelAttribute()
+    {
+        $labels = [
+            'pickup' => 'Jemput di Tempat',
+            'courier' => 'Kurir Antar',
+        ];
+
+        return $labels[$this->shipping_method] ?? 'Unknown';
     }
 
     // Scopes
@@ -170,7 +203,17 @@ class Order extends Model
 
     public function isCompleted()
     {
-        return $this->status === self::STATUS_DELIVERED;
+        // Order completed jika status delivered atau delivery status delivered
+        if ($this->status === self::STATUS_DELIVERED) {
+            return true;
+        }
+        
+        // Cek delivery status jika ada
+        if ($this->relationLoaded('delivery') && $this->delivery) {
+            return $this->delivery->status === 'delivered';
+        }
+        
+        return false;
     }
 
     public function getTotalItemsAttribute()

@@ -122,7 +122,7 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/')->with('success', 'Akun berhasil dihapus. Terima kasih telah menggunakan AgriConnect!');
+        return Redirect::to('/')->with('success', 'Akun berhasil dihapus. Terima kasih telah menggunakan Zynera!');
     }
 
     /**
@@ -180,10 +180,30 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $orders = $user->orders()
-            ->with(['orderItems.product', 'payment'])
-            ->latest()
-            ->paginate(10);
+        $query = $user->orders()->with(['orderItems.product', 'payment', 'delivery.courier']);
+
+        // Filter berdasarkan status jika ada
+        if ($request->has('status') && $request->status) {
+            $status = $request->status;
+            
+            if ($status === 'completed') {
+                // Show orders yang delivery status = delivered atau order status = delivered
+                $query->where(function($q) {
+                    $q->where('status', 'delivered')
+                      ->orWhereHas('delivery', function($delivery) {
+                          $delivery->where('status', 'delivered');
+                      });
+                });
+            } else {
+                // Filter status biasa, tapi exclude yang sudah delivered di delivery
+                $query->where('status', $status)
+                      ->whereDoesntHave('delivery', function($delivery) {
+                          $delivery->where('status', 'delivered');
+                      });
+            }
+        }
+
+        $orders = $query->latest()->paginate(10);
 
         return view('profile.orders', compact('orders'));
     }
@@ -203,3 +223,4 @@ class ProfileController extends Controller
         return view('profile.reviews', compact('reviews'));
     }
 }
+

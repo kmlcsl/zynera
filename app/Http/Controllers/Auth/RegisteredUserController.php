@@ -326,10 +326,11 @@ class RegisteredUserController extends Controller
     private function getWelcomeMessage(string $userType): string
     {
         return match ($userType) {
-            'konsumen' => 'Selamat datang di AgriConnect! Akun pembeli Anda telah berhasil dibuat dan diverifikasi. Anda dapat mulai berbelanja produk pangan lokal.',
-            'produsen' => 'Selamat datang di AgriConnect! Akun penjual Anda telah berhasil dibuat dan diverifikasi. Anda dapat mulai mengelola toko dan produk Anda.',
-            'kurir' => 'Selamat datang di AgriConnect! Akun kurir Anda telah berhasil dibuat dan diverifikasi. Admin akan segera melakukan review akun Anda.',
-            default => 'Selamat datang di AgriConnect! Akun Anda telah berhasil dibuat dan diverifikasi.'
+            'konsumen' => 'Selamat datang di Zynera! Akun pembeli Anda telah berhasil dibuat dan diverifikasi. Anda dapat mulai berbelanja produk pangan lokal.',
+            'produsen' => 'Selamat datang di Zynera! Akun penjual Anda telah berhasil dibuat dan diverifikasi. Anda dapat mulai mengelola toko dan produk Anda.',
+            'kurir' => 'Selamat datang di Zynera! Akun kurir Anda telah berhasil dibuat dan diverifikasi. Admin akan segera melakukan review akun Anda.',
+            default => 'Selamat datang di Zynera! Akun Anda telah berhasil dibuat dan diverifikasi.'
         };
     }
 }
+

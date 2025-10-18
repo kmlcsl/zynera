@@ -76,41 +76,22 @@
                                     <h3 class="font-semibold text-gray-900">
                                         Pesanan #{{ $order->order_number }}
                                     </h3>
+                                    @php
+                                        $actualStatus = $order->delivery && $order->delivery->status === 'delivered' ? 'completed' : $order->status;
+                                        $statusLabel = $order->status_label;
+                                    @endphp
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {{ $order->status === 'completed'
+                                    {{ $actualStatus === 'completed' || ($order->delivery && $order->delivery->status === 'delivered')
                                         ? 'bg-green-100 text-green-800'
                                         : ($order->status === 'pending'
                                             ? 'bg-yellow-100 text-yellow-800'
                                             : ($order->status === 'paid'
                                                 ? 'bg-blue-100 text-blue-800'
-                                                : ($order->status === 'shipped'
+                                                : ($order->status === 'shipped' || ($order->delivery && in_array($order->delivery->status, ['in_transit', 'picked_up']))
                                                     ? 'bg-purple-100 text-purple-800'
                                                     : 'bg-gray-100 text-gray-800'))) }}">
-                                        @switch($order->status)
-                                            @case('pending')
-                                                Menunggu Pembayaran
-                                            @break
-
-                                            @case('paid')
-                                                Diproses
-                                            @break
-
-                                            @case('shipped')
-                                                Dalam Pengiriman
-                                            @break
-
-                                            @case('completed')
-                                                Selesai
-                                            @break
-
-                                            @case('cancelled')
-                                                Dibatalkan
-                                            @break
-
-                                            @default
-                                                {{ ucfirst($order->status) }}
-                                        @endswitch
+                                        {{ $statusLabel }}
                                     </span>
                                 </div>
 
@@ -237,7 +218,10 @@
                                             </button>
                                         @endif
 
-                                        @if ($order->status === 'completed' && !$order->review_submitted)
+                                        @php
+                                            $isCompleted = $order->status === 'completed' || ($order->delivery && $order->delivery->status === 'delivered');
+                                        @endphp
+                                        @if ($isCompleted && !$order->review_submitted)
                                             <a href="{{ route('orders.show', $order) }}#review"
                                                 class="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition-colors text-center">
                                                 <i class="fas fa-star mr-2"></i>Beri Review

@@ -23,19 +23,6 @@
 
                         <div class="divide-y">
                             @foreach ($carts as $cart)
-                                @php
-                                    $images = [];
-                                    if ($cart->product->images) {
-                                        if (is_array($cart->product->images)) {
-                                            $images = $cart->product->images;
-                                        } elseif (is_string($cart->product->images)) {
-                                            $decoded = json_decode($cart->product->images, true);
-                                            $images = is_array($decoded) ? $decoded : [];
-                                        }
-                                    }
-                                    $imageCount = is_array($images) ? count($images) : 0;
-                                @endphp
-
                                 <div class="p-6 cart-item" data-id="{{ $cart->id }}"
                                     data-price="{{ $cart->product->price }}">
                                     <div class="flex items-start gap-4">
@@ -48,8 +35,8 @@
 
                                         <!-- Product Image -->
                                         <div class="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                                            @if ($imageCount > 0)
-                                                <img src="{{ asset('storage/' . $images[0]) }}"
+                                            @if ($cart->product->main_image_url)
+                                                <img src="{{ $cart->product->main_image_url }}"
                                                     alt="{{ $cart->product->name }}" class="w-full h-full object-cover">
                                             @else
                                                 <div class="w-full h-full flex items-center justify-center text-gray-400">

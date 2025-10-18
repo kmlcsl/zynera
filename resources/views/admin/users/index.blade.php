@@ -2,7 +2,7 @@
 
 @section('title', 'Manajemen User')
 @section('page-title', 'Manajemen User')
-@section('page-description', 'Kelola pengguna dan permission akses platform AgriConnect')
+@section('page-description', 'Kelola pengguna dan permission akses platform Zynera')
 
 @section('page-actions')
     <a href="{{ route('admin.users.create') }}"
@@ -317,3 +317,4 @@
             </div>
         </div>
     @endsection
+

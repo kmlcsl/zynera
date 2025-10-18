@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Pilih Jenis Akun - {{ config('app.name', 'AgriConnect') }}</title>
+    <title>Pilih Jenis Akun - {{ config('app.name', 'Zynera') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -24,15 +24,15 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        .agriconnect-primary {
+        .Zynera-primary {
             background: linear-gradient(135deg, #10b981, #0d9488);
         }
 
-        .text-agriconnect-primary {
+        .text-Zynera-primary {
             color: #10b981;
         }
 
-        .bg-agriconnect-pattern {
+        .bg-Zynera-pattern {
             background-image:
                 radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 75% 75%, rgba(5, 150, 105, 0.1) 0%, transparent 50%);
@@ -43,15 +43,15 @@
 <body class="font-poppins antialiased bg-slate-50">
     <div class="min-h-screen flex">
         <!-- Left Side - Hero -->
-        <div class="hidden lg:flex lg:w-1/2 agriconnect-primary relative overflow-hidden">
-            <div class="absolute inset-0 bg-agriconnect-pattern"></div>
+        <div class="hidden lg:flex lg:w-1/2 Zynera-primary relative overflow-hidden">
+            <div class="absolute inset-0 bg-Zynera-pattern"></div>
             <div class="relative z-10 flex flex-col justify-center p-12 text-white">
                 <!-- Logo -->
                 <div class="flex items-center mb-8">
-                    <img src="{{ asset('images/logo.jpg') }}" alt="AgriConnect"
+                    <img src="{{ asset('images/logo-zynera-v2.png') }}" alt="Zynera"
                         class="w-12 h-12 object-contain mr-3 rounded-2xl bg-white/20 backdrop-blur-sm p-1">
                     <div>
-                        <h1 class="text-2xl font-bold">AgriConnect</h1>
+                        <h1 class="text-2xl font-bold">Zynera</h1>
                         <p class="text-sm text-emerald-100 -mt-1">Fresh & Organic</p>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     <h2 class="text-3xl font-bold mb-4">Hampir Selesai!</h2>
                     <p class="text-emerald-100 text-lg leading-relaxed mb-8">
                         Halo <span class="font-semibold">{{ $tempGoogleData['name'] }}</span>!
-                        Silakan pilih jenis akun yang ingin Anda buat di AgriConnect.
+                        Silakan pilih jenis akun yang ingin Anda buat di Zynera.
                     </p>
 
                     <!-- Account Types Info -->
@@ -101,11 +101,11 @@
                 <!-- Mobile Logo -->
                 <div class="flex justify-center lg:hidden mb-8">
                     <div class="flex items-center">
-                        <div class="w-10 h-10 agriconnect-primary rounded-2xl flex items-center justify-center mr-3">
+                        <div class="w-10 h-10 Zynera-primary rounded-2xl flex items-center justify-center mr-3">
                             <span class="text-xl">🌿</span>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold text-agriconnect-primary">AgriConnect</h1>
+                            <h1 class="text-xl font-bold text-Zynera-primary">Zynera</h1>
                             <p class="text-xs text-slate-500 -mt-1">Fresh & Organic</p>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
 
                     <h2 class="text-3xl font-bold tracking-tight text-slate-900">Pilih Jenis Akun</h2>
                     <p class="mt-2 text-sm text-slate-600">
-                        Halo <span class="font-medium text-agriconnect-primary">{{ $tempGoogleData['name'] }}</span>!
+                        Halo <span class="font-medium text-Zynera-primary">{{ $tempGoogleData['name'] }}</span>!
                     </p>
                     <p class="text-xs text-slate-500">{{ $email }}</p>
                 </div>
@@ -302,7 +302,7 @@
                         <!-- Submit Button -->
                         <div class="pt-4">
                             <button type="submit"
-                                class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white agriconnect-primary hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                                class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white Zynera-primary hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 transform hover:-translate-y-0.5">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
@@ -316,7 +316,7 @@
                 <!-- Footer -->
                 <div class="mt-8 text-center">
                     <p class="text-sm text-slate-600">
-                        <a href="{{ route('login') }}" class="font-medium text-agriconnect-primary hover:underline">
+                        <a href="{{ route('login') }}" class="font-medium text-Zynera-primary hover:underline">
                             ← Kembali ke Login
                         </a>
                     </p>
@@ -327,3 +327,6 @@
 </body>
 
 </html>
+
+
+

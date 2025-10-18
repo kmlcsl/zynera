@@ -4,7 +4,7 @@
 @section('page-title', 'Kelola Pesanan')
 @section('page-description')
 @if (auth()->user()->user_type === 'admin')
-Kelola semua pesanan di platform AgriConnect
+Kelola semua pesanan di platform Zynera
 @elseif(auth()->user()->user_type === 'produsen')
 Kelola pesanan produk Anda dan assign kurir
 @elseif(auth()->user()->user_type === 'kurir')
@@ -314,6 +314,7 @@ Kelola pesanan untuk pengiriman
                     <th class="text-left py-4 px-4 font-semibold text-gray-700">Items</th>
                     <th class="text-left py-4 px-4 font-semibold text-gray-700">Total</th>
                     <th class="text-left py-4 px-4 font-semibold text-gray-700">Status</th>
+                    <th class="text-left py-4 px-4 font-semibold text-gray-700">Payment</th>
                     @if (in_array(auth()->user()->user_type, ['admin', 'produsen']))
                     <th class="text-left py-4 px-4 font-semibold text-gray-700">Kurir</th>
                     @endif
@@ -1193,3 +1194,4 @@ Kelola pesanan untuk pengiriman
         @endif
 </script>
 @endsection
+

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Models\Order;
 use App\Models\Cart;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -23,8 +25,8 @@ class PaymentController extends Controller
         }
 
         // Validate payment method and status
-        if ($payment->method !== 'transfer') {
-            return redirect()->back()->with('error', 'Upload bukti hanya untuk pembayaran Transfer Bank.');
+        if (!in_array($payment->method, ['transfer', 'manual'])) {
+            return redirect()->back()->with('error', 'Upload bukti hanya untuk pembayaran Transfer Bank atau Pembayaran Manual.');
         }
 
         if ($payment->status !== 'pending') {
@@ -205,6 +207,158 @@ class PaymentController extends Controller
             'paid_at' => $payment->paid_at ? $payment->paid_at->toDateTimeString() : null,
             'reference_number' => $payment->reference_number
         ]);
+    }
+
+    /**
+     * Handle Midtrans notification callback
+     */
+    public function midtransNotification(Request $request)
+    {
+        try {
+            $midtransService = new MidtransService();
+            $success = $midtransService->handleNotification($request->getContent());
+            
+            if ($success) {
+                return response()->json(['status' => 'success']);
+            } else {
+                return response()->json(['status' => 'failed'], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error('Midtrans notification handler exception', [
+                'error' => $e->getMessage(),
+                'request_body' => $request->getContent()
+            ]);
+            
+            return response()->json(['status' => 'error'], 500);
+        }
+    }
+
+    /**
+     * Simulasi callback Midtrans (untuk testing)
+     */
+    public function simulateMidtransPayment(Payment $payment)
+    {
+        // Only for testing - simulate successful Midtrans callback
+        if ($payment->method !== 'midtrans' || $payment->status !== 'pending') {
+            return redirect()->back()->with('error', 'Invalid payment for Midtrans simulation.');
+        }
+
+        // Authorization check
+        if ($payment->order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // Simulate successful payment callback
+            $transactionId = 'MIDTRANS_SIMULATION_' . now()->format('YmdHis') . '_' . rand(1000, 9999);
+            $payment->markAsPaid($transactionId);
+
+            // Clear cart items for this order
+            $order = $payment->order;
+            $this->clearCartForOrder($order);
+
+            DB::commit();
+
+            Log::info('Midtrans callback simulated successfully', [
+                'payment_id' => $payment->id,
+                'order_id' => $order->id,
+                'transaction_id' => $transactionId
+            ]);
+
+            return redirect()->back()->with('success', 'Pembayaran Midtrans berhasil disimulasi! Status telah diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Midtrans simulation failed', [
+                'payment_id' => $payment->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan dalam simulasi pembayaran Midtrans.');
+        }
+    }
+
+    /**
+     * Payment success page (from Midtrans redirect)
+     */
+    public function success(Payment $payment)
+    {
+        // Redirect to order success page
+        return redirect()->route('orders.success', ['order' => $payment->order->id])
+            ->with('success', 'Pembayaran berhasil!');
+    }
+
+    /**
+     * Sync payment status with Midtrans API
+     */
+    public function syncPaymentStatus(Payment $payment)
+    {
+        // Authorization check
+        if ($payment->order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($payment->method !== 'midtrans' || $payment->status !== 'pending') {
+            return redirect()->back()->with('error', 'Cannot sync: Payment is not pending Midtrans payment.');
+        }
+
+        try {
+            $serverKey = config('midtrans.server_key');
+            $isProduction = config('midtrans.is_production');
+            
+            $apiUrl = $isProduction 
+                ? "https://api.midtrans.com/v2/{$payment->order->order_number}/status"
+                : "https://api.sandbox.midtrans.com/v2/{$payment->order->order_number}/status";
+            
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Accept' => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode($serverKey . ':')
+            ])->get($apiUrl);
+            
+            if (!$response->successful()) {
+                Log::error('Midtrans API sync failed', [
+                    'order_number' => $payment->order->order_number,
+                    'status' => $response->status(),
+                    'response' => $response->body()
+                ]);
+                return redirect()->back()->with('error', 'Failed to sync with Midtrans API.');
+            }
+            
+            $data = $response->json();
+            $transactionStatus = $data['transaction_status'] ?? null;
+            $fraudStatus = $data['fraud_status'] ?? null;
+            
+            DB::beginTransaction();
+            
+            if ($transactionStatus === 'settlement') {
+                $payment->markAsPaid($data['transaction_id'] ?? null);
+                DB::commit();
+                return redirect()->back()->with('success', 'Payment synced successfully! Status updated to PAID.');
+            } elseif ($transactionStatus === 'capture' && $fraudStatus === 'accept') {
+                $payment->markAsPaid($data['transaction_id'] ?? null);
+                DB::commit();
+                return redirect()->back()->with('success', 'Payment synced successfully! Status updated to PAID (capture).');
+            } elseif (in_array($transactionStatus, ['deny', 'cancel', 'expire', 'failure'])) {
+                $payment->update(['status' => Payment::STATUS_FAILED]);
+                $payment->order->update(['status' => Order::STATUS_CANCELLED]);
+                DB::commit();
+                return redirect()->back()->with('warning', "Payment synced: Status is {$transactionStatus}.");
+            } else {
+                DB::commit();
+                return redirect()->back()->with('info', "Payment status in Midtrans: {$transactionStatus}. No update needed.");
+            }
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Payment sync failed', [
+                'payment_id' => $payment->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()->back()->with('error', 'Error syncing payment status.');
+        }
     }
 
     /**

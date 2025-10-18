@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kwitansi Pembayaran #{{ $payment->id }} - AgriConnect</title>
+    <title>Kwitansi Pembayaran #{{ $payment->id }} - Zynera</title>
     <style>
         * {
             margin: 0;
@@ -258,7 +258,7 @@
 
         <div class="receipt-header">
             <h1>KWITANSI PEMBAYARAN</h1>
-            <p>AgriConnect - Platform Produk Lokal</p>
+            <p>Zynera - Platform Produk Lokal</p>
         </div>
 
         <div class="receipt-body">
@@ -388,13 +388,13 @@
         </div>
 
         <div class="receipt-footer">
-            <p><strong>Terima kasih telah berbelanja di AgriConnect!</strong></p>
+            <p><strong>Terima kasih telah berbelanja di Zynera!</strong></p>
             <p style="margin-top: 10px;">
                 Kwitansi ini dicetak secara otomatis pada {{ now()->format('d F Y, H:i:s') }} WIB<br>
-                Untuk pertanyaan, hubungi customer service kami di support@AgriConnect.click
+                Untuk pertanyaan, hubungi customer service kami di support@Zynera.click
             </p>
             <p style="margin-top: 15px; font-size: 12px; color: #adb5bd;">
-                © {{ date('Y') }} AgriConnect. Platform e-commerce produk lokal.<br>
+                © {{ date('Y') }} Zynera. Platform e-commerce produk lokal.<br>
                 Payment ID: {{ $payment->id }} |
                 @if ($payment->paid_at)
                     Dibayar: {{ $payment->paid_at->format('d/m/Y H:i') }}
@@ -423,3 +423,4 @@
 </body>
 
 </html>
+

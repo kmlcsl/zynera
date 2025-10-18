@@ -17,23 +17,10 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <!-- Product Images -->
             <div class="space-y-4">
-                @php
-                    $images = [];
-                    if ($product->images) {
-                        if (is_array($product->images)) {
-                            $images = $product->images;
-                        } elseif (is_string($product->images)) {
-                            $decoded = json_decode($product->images, true);
-                            $images = is_array($decoded) ? $decoded : [];
-                        }
-                    }
-                    $imageCount = is_array($images) ? count($images) : 0;
-                @endphp
-
                 <!-- Main Image -->
                 <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
-                    @if ($imageCount > 0)
-                        <img id="mainImage" src="{{ asset('storage/' . $images[0]) }}" alt="{{ $product->name }}"
+                    @if ($product->main_image_url)
+                        <img id="mainImage" src="{{ $product->main_image_url }}" alt="{{ $product->name }}"
                             class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center text-gray-400">
@@ -43,12 +30,12 @@
                 </div>
 
                 <!-- Thumbnail Images -->
-                @if ($imageCount > 1)
+                @if (count($product->image_urls) > 1)
                     <div class="grid grid-cols-4 gap-2">
-                        @foreach ($images as $index => $image)
+                        @foreach ($product->image_urls as $index => $imageUrl)
                             <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer border-2 hover:border-green-500 transition-colors"
-                                onclick="changeMainImage('{{ asset('storage/' . $image) }}', this)">
-                                <img src="{{ asset('storage/' . $image) }}" alt="{{ $product->name }}"
+                                onclick="changeMainImage('{{ $imageUrl }}', this)">
+                                <img src="{{ $imageUrl }}" alt="{{ $product->name }}"
                                     class="w-full h-full object-cover">
                             </div>
                         @endforeach
@@ -204,21 +191,9 @@
                     @foreach ($relatedProducts as $relatedProduct)
                         <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <a href="{{ route('products.show', $relatedProduct->slug) }}">
-                                @php
-                                    $relatedImages = [];
-                                    if ($relatedProduct->images) {
-                                        if (is_array($relatedProduct->images)) {
-                                            $relatedImages = $relatedProduct->images;
-                                        } elseif (is_string($relatedProduct->images)) {
-                                            $decoded = json_decode($relatedProduct->images, true);
-                                            $relatedImages = is_array($decoded) ? $decoded : [];
-                                        }
-                                    }
-                                @endphp
-
                                 <div class="aspect-square bg-gray-200">
-                                    @if (count($relatedImages) > 0)
-                                        <img src="{{ asset('storage/' . $relatedImages[0]) }}"
+                                    @if ($relatedProduct->main_image_url)
+                                        <img src="{{ $relatedProduct->main_image_url }}"
                                             alt="{{ $relatedProduct->name }}" class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-gray-400">

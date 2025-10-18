@@ -24,17 +24,17 @@
         <!-- Main Product Info -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Product Images -->
-            @if ($product->images && count($product->images) > 0)
+            @if ($product->has_images)
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Gambar Produk</h3>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        @foreach ($product->images as $image)
+                        @foreach ($product->image_urls as $imageUrl)
                             <div class="relative group">
-                                <img src="{{ asset('storage/' . $image) }}" alt="{{ $product->name }}"
+                                <img src="{{ $imageUrl }}" alt="{{ $product->name }}"
                                     class="w-full h-32 object-cover rounded-lg">
                                 <div
                                     class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-lg flex items-center justify-center">
-                                    <button onclick="openImageModal('{{ asset('storage/' . $image) }}')"
+                                    <button onclick="openImageModal('{{ $imageUrl }}')"
                                         class="opacity-0 group-hover:opacity-100 bg-white text-gray-800 px-3 py-1 rounded-lg text-sm font-medium transition-opacity">
                                         <i class="fas fa-expand mr-1"></i> Perbesar
                                     </button>

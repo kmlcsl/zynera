@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Verifikasi OTP - {{ config('app.name', 'AgriConnect') }}</title>
+    <title>Verifikasi OTP - {{ config('app.name', 'Zynera') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -24,19 +24,19 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        .agriconnect-primary {
+        .Zynera-primary {
             background: linear-gradient(135deg, #10b981, #0d9488);
         }
 
-        .agriconnect-secondary {
+        .Zynera-secondary {
             background: linear-gradient(135deg, #059669, #0f766e);
         }
 
-        .text-agriconnect-primary {
+        .text-Zynera-primary {
             color: #10b981;
         }
 
-        .bg-agriconnect-pattern {
+        .bg-Zynera-pattern {
             background-image:
                 radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 75% 75%, rgba(5, 150, 105, 0.1) 0%, transparent 50%);
@@ -70,15 +70,15 @@
 <body class="font-poppins antialiased bg-slate-50">
     <div class="min-h-screen flex">
         <!-- Left Side - Hero -->
-        <div class="hidden lg:flex lg:w-1/2 agriconnect-primary relative overflow-hidden">
-            <div class="absolute inset-0 bg-agriconnect-pattern"></div>
+        <div class="hidden lg:flex lg:w-1/2 Zynera-primary relative overflow-hidden">
+            <div class="absolute inset-0 bg-Zynera-pattern"></div>
             <div class="relative z-10 flex flex-col justify-center p-12 text-white">
                 <!-- Logo -->
                 <div class="flex items-center mb-8">
-                    <img src="{{ asset('images/logo.jpg') }}" alt="AgriConnect"
+                    <img src="{{ asset('images/logo-zynera-v2.png') }}" alt="Zynera"
                         class="w-12 h-12 object-contain mr-3 rounded-2xl bg-white/20 backdrop-blur-sm p-1">
                     <div>
-                        <h1 class="text-2xl font-bold">AgriConnect</h1>
+                        <h1 class="text-2xl font-bold">Zynera</h1>
                         <p class="text-sm text-emerald-100 -mt-1">Fresh & Organic</p>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                     <h2 class="text-3xl font-bold mb-4">Satu Langkah Lagi!</h2>
                     <p class="text-emerald-100 text-lg leading-relaxed mb-8">
                         Verifikasi email Anda dengan memasukkan kode OTP yang telah dikirim.
-                        Langkah terakhir untuk bergabung dengan komunitas AgriConnect.
+                        Langkah terakhir untuk bergabung dengan komunitas Zynera.
                     </p>
 
                     <!-- Security Features -->
@@ -140,11 +140,11 @@
                 <!-- Mobile Logo -->
                 <div class="flex justify-center lg:hidden mb-8">
                     <div class="flex items-center">
-                        <div class="w-10 h-10 agriconnect-primary rounded-2xl flex items-center justify-center mr-3">
+                        <div class="w-10 h-10 Zynera-primary rounded-2xl flex items-center justify-center mr-3">
                             <span class="text-xl">🌿</span>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold text-agriconnect-primary">AgriConnect</h1>
+                            <h1 class="text-xl font-bold text-Zynera-primary">Zynera</h1>
                             <p class="text-xs text-slate-500 -mt-1">Fresh & Organic</p>
                         </div>
                     </div>
@@ -154,7 +154,7 @@
                 <div class="text-center">
                     <div class="flex justify-center mb-6">
                         <div
-                            class="w-16 h-16 agriconnect-primary rounded-2xl flex items-center justify-center shadow-lg">
+                            class="w-16 h-16 Zynera-primary rounded-2xl flex items-center justify-center shadow-lg">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
@@ -167,7 +167,7 @@
                     <p class="mt-2 text-sm text-slate-600">
                         Masukkan kode 6 digit yang telah dikirim ke
                     </p>
-                    <p class="text-agriconnect-primary font-medium mt-1">{{ $email }}</p>
+                    <p class="text-Zynera-primary font-medium mt-1">{{ $email }}</p>
 
                     @if (isset($registrationData))
                         <div class="mt-3 text-xs text-slate-500">
@@ -248,8 +248,8 @@
 
                         <!-- Submit Button -->
                         <div>
-                            <button type="submit"
-                                class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white agriconnect-primary hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            <button type="button" x-on:click="submitOtpForm()"
+                                class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white Zynera-primary hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 :disabled="otp.length !== 6">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -279,7 +279,7 @@
                                 @csrf
                                 <input type="hidden" name="email" value="{{ $email }}">
                                 <button type="submit"
-                                    class="inline-flex items-center text-agriconnect-primary hover:underline font-medium text-sm transition-colors duration-200">
+                                    class="inline-flex items-center text-Zynera-primary hover:underline font-medium text-sm transition-colors duration-200">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -311,7 +311,7 @@
                 <div class="mt-8 text-center space-y-2">
                     <p class="text-sm text-slate-600">
                         <a href="{{ route('register') }}"
-                            class="font-medium text-agriconnect-primary hover:underline">
+                            class="font-medium text-Zynera-primary hover:underline">
                             ← Kembali ke Pendaftaran
                         </a>
                     </p>
@@ -334,14 +334,41 @@
                 otp: '',
                 isResendDisabled: true,
                 resendTimer: 60,
+                csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 
                 init() {
                     this.startResendTimer();
+                    this.refreshCsrfToken(); // Refresh CSRF token saat init
 
                     // Auto-focus pada input OTP
                     this.$nextTick(() => {
                         document.getElementById('otp').focus();
                     });
+                },
+
+                // Refresh CSRF token every 5 minutes to prevent expiry
+                refreshCsrfToken() {
+                    setInterval(() => {
+                        fetch('/csrf-token', {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.csrf_token) {
+                                this.csrfToken = data.csrf_token;
+                                document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
+                                // Update all CSRF inputs
+                                document.querySelectorAll('input[name="_token"]').forEach(input => {
+                                    input.value = data.csrf_token;
+                                });
+                            }
+                        })
+                        .catch(error => console.log('CSRF refresh failed:', error));
+                    }, 300000); // 5 minutes
                 },
 
                 handleOtpInput() {
@@ -351,8 +378,80 @@
                     // Auto submit ketika 6 digit terisi
                     if (this.otp.length === 6) {
                         setTimeout(() => {
-                            document.querySelector('form').submit();
+                            this.submitOtpForm();
                         }, 300);
+                    }
+                },
+
+                // Submit OTP with retry logic for 419 errors
+                async submitOtpForm() {
+                    const form = document.querySelector('form');
+                    const formData = new FormData(form);
+                    
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+
+                        if (response.status === 419) {
+                            // CSRF expired, refresh and retry
+                            console.log('CSRF expired, refreshing token and retrying...');
+                            await this.refreshCsrfTokenImmediate();
+                            
+                            // Update form token and retry
+                            const newFormData = new FormData(form);
+                            newFormData.set('_token', this.csrfToken);
+                            
+                            const retryResponse = await fetch(form.action, {
+                                method: 'POST',
+                                body: newFormData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            });
+                            
+                            if (retryResponse.ok) {
+                                window.location.href = retryResponse.url || '{{ route("home") }}';
+                            } else {
+                                throw new Error('Retry failed');
+                            }
+                        } else if (response.ok) {
+                            window.location.href = response.url || '{{ route("home") }}';
+                        } else {
+                            throw new Error('Submit failed');
+                        }
+                    } catch (error) {
+                        console.error('OTP submit error:', error);
+                        // Fallback: use regular form submit
+                        form.submit();
+                    }
+                },
+
+                // Immediate CSRF refresh
+                async refreshCsrfTokenImmediate() {
+                    try {
+                        const response = await fetch('/csrf-token', {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        const data = await response.json();
+                        if (data.csrf_token) {
+                            this.csrfToken = data.csrf_token;
+                            document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
+                            document.querySelectorAll('input[name="_token"]').forEach(input => {
+                                input.value = data.csrf_token;
+                            });
+                        }
+                    } catch (error) {
+                        console.error('CSRF immediate refresh failed:', error);
                     }
                 },
 
@@ -372,3 +471,6 @@
 </body>
 
 </html>
+
+
+
