@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS `cache` (
 
 -- Membuang data untuk tabel zynera_v2_db.cache: ~0 rows (lebih kurang)
 DELETE FROM `cache`;
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
+	('zynera_v2_cache_spatie.permission.cache', 'a:3:{s:5:"alias";a:0:{}s:11:"permissions";a:0:{}s:5:"roles";a:0:{}}', 1760869346);
 
 -- membuang struktur untuk table zynera_v2_db.cache_locks
 CREATE TABLE IF NOT EXISTS `cache_locks` (
@@ -73,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   UNIQUE KEY `categories_slug_unique` (`slug`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Membuang data untuk tabel zynera_v2_db.categories: ~3 rows (lebih kurang)
+-- Membuang data untuk tabel zynera_v2_db.categories: ~2 rows (lebih kurang)
 DELETE FROM `categories`;
 INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `image`, `is_active`, `created_at`, `updated_at`) VALUES
 	(1, 'Minyak Jelantah Grade A', 'minyak-jelantah-grade-a', 'Minyak jelantah berkualitas tinggi, sudah difilter dan siap olah ulang', 'categories/grade-a.jpg', 1, '2025-10-17 21:21:04', '2025-10-17 21:21:04'),
@@ -152,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   KEY `jobs_queue_index` (`queue`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Membuang data untuk tabel zynera_v2_db.jobs: ~0 rows (lebih kurang)
+-- Membuang data untuk tabel zynera_v2_db.jobs: ~2 rows (lebih kurang)
 DELETE FROM `jobs`;
 INSERT INTO `jobs` (`id`, `queue`, `payload`, `attempts`, `reserved_at`, `available_at`, `created_at`) VALUES
 	(1, 'default', '{"uuid":"98e5ee2f-4a80-416e-bbba-97e9dfa32d60","displayName":"App\\\\Events\\\\DeliveryStatusUpdated","job":"Illuminate\\\\Queue\\\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"Illuminate\\\\Broadcasting\\\\BroadcastEvent","command":"O:38:\\"Illuminate\\\\Broadcasting\\\\BroadcastEvent\\":15:{s:5:\\"event\\";O:32:\\"App\\\\Events\\\\DeliveryStatusUpdated\\":3:{s:8:\\"delivery\\";O:45:\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\":5:{s:5:\\"class\\";s:19:\\"App\\\\Models\\\\Delivery\\";s:2:\\"id\\";i:5;s:9:\\"relations\\";a:2:{i:0;s:5:\\"order\\";i:1;s:7:\\"courier\\";}s:10:\\"connection\\";s:5:\\"mysql\\";s:15:\\"collectionClass\\";N;}s:9:\\"oldStatus\\";s:9:\\"picked_up\\";s:9:\\"newStatus\\";s:10:\\"in_transit\\";}s:5:\\"tries\\";N;s:7:\\"timeout\\";N;s:7:\\"backoff\\";N;s:13:\\"maxExceptions\\";N;s:10:\\"connection\\";N;s:5:\\"queue\\";N;s:12:\\"messageGroup\\";N;s:5:\\"delay\\";N;s:11:\\"afterCommit\\";N;s:10:\\"middleware\\";a:0:{}s:7:\\"chained\\";a:0:{}s:15:\\"chainConnection\\";N;s:10:\\"chainQueue\\";N;s:19:\\"chainCatchCallbacks\\";N;}"},"createdAt":1760775481,"delay":null}', 0, NULL, 1760775481, 1760775481),
@@ -184,7 +186,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Membuang data untuk tabel zynera_v2_db.migrations: ~1 rows (lebih kurang)
+-- Membuang data untuk tabel zynera_v2_db.migrations: ~37 rows (lebih kurang)
 DELETE FROM `migrations`;
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(1, '0001_01_01_000000_create_users_table', 1),
@@ -412,8 +414,11 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `products_village_id_foreign` FOREIGN KEY (`village_id`) REFERENCES `regions` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Membuang data untuk tabel zynera_v2_db.products: ~4 rows (lebih kurang)
+-- Membuang data untuk tabel zynera_v2_db.products: ~2 rows (lebih kurang)
 DELETE FROM `products`;
+INSERT INTO `products` (`id`, `name`, `slug`, `description`, `price`, `stock`, `unit`, `images`, `category_id`, `user_id`, `village_id`, `is_active`, `is_featured`, `weight`, `ingredients`, `alamat_asal`, `created_at`, `updated_at`) VALUES
+	(1, 'Jelantah', 'jelantah', 'Jelantah adalah minyak jelantah grade A yang telah melalui proses penyaringan dan pemurnian untuk menghasilkan kualitas terbaik. Produk ini cocok digunakan sebagai bahan baku industri biodiesel, sabun, lilin, dan berbagai produk turunan ramah lingkungan. Dengan kadar air dan kotoran yang rendah, Jelantah menjadi pilihan ideal bagi pelaku industri yang mengutamakan efisiensi, keberlanjutan, dan standar mutu tinggi.', 4000.00, 50, '1 liter', '["products/yrNstRNGzD2j42sZ3AvTABSl66CVcLdp4AjXRcxc.jpg"]', 1, 2, NULL, 1, 1, NULL, '[null]', 'Banda Aceh', '2025-10-18 03:22:26', '2025-10-18 03:26:41'),
+	(2, 'Jelantah Hitam', 'jelantah-hitam', 'Jelantah Hitam merupakan minyak jelantah grade B yang berasal dari hasil penggunaan berulang dengan tingkat kejernihan lebih rendah dibanding grade A. Meskipun warnanya lebih pekat, minyak ini tetap bernilai tinggi sebagai bahan baku alternatif untuk industri seperti pembuatan biodiesel, pelumas mesin non-makanan, dan lilin. Dengan pengolahan yang tepat, Jelantah Hitam menjadi sumber energi terbarukan yang ekonomis dan ramah lingkungan.', 3000.00, 50, '1 liter', '["products/KHlHWOd1mXXv9ZF8VjzEbvDVQNDBjurEjPJdvmw9.png"]', 2, 2, NULL, 1, 1, NULL, NULL, 'Banda aceh', '2025-10-18 03:26:28', '2025-10-18 03:26:28');
 
 -- membuang struktur untuk table zynera_v2_db.recipes
 IF NOT EXISTS ;
@@ -437,7 +442,7 @@ CREATE TABLE IF NOT EXISTS `regions` (
   CONSTRAINT `regions_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `regions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=336 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Membuang data untuk tabel zynera_v2_db.regions: ~0 rows (lebih kurang)
+-- Membuang data untuk tabel zynera_v2_db.regions: ~335 rows (lebih kurang)
 DELETE FROM `regions`;
 INSERT INTO `regions` (`id`, `type`, `name`, `code`, `parent_id`, `is_active`, `created_at`, `updated_at`) VALUES
 	(1, 'kabupaten', 'Aceh Barat', '1103', NULL, 1, '2025-10-18 00:41:38', '2025-10-18 00:41:38'),
@@ -839,12 +844,12 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Membuang data untuk tabel zynera_v2_db.sessions: ~1 rows (lebih kurang)
+-- Membuang data untuk tabel zynera_v2_db.sessions: ~3 rows (lebih kurang)
 DELETE FROM `sessions`;
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-	('i7A0p7M7dqzmyLe1SeDCvieuOXbrWkhTbC16QVVr', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic0hmRGQ4QlQ2NTMwc01OdWFVM0R3a05Ja25wZGdUa0tiTEQ0bVFFYSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9lZHVjYXRpb24iO319', 1760782329),
+	('i7A0p7M7dqzmyLe1SeDCvieuOXbrWkhTbC16QVVr', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic0hmRGQ4QlQ2NTMwc01OdWFVM0R3a05Ja25wZGdUa0tiTEQ0bVFFYSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9wcm9kdWN0cyI7fX0=', 1760783187),
 	('o4xsCsMGFpp2aqkjKugGpWthlHOjLDXoJIZ5WZdC', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiSkIxODREZWJKeU4wQXJxY2NLamVMVkhvbW5BRU1ncDk3NGs2OW1FMyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9kYXNoYm9hcmQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1760779863),
-	('U7cSmT92s0XalMLaYM4l46HFDQObULdVvCVaL8G6', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicUVGZEVHM1VEN1Npdmp2Y1NEVGczeUlMZTR2bkVmaHJqUWMzV3hKbyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9wcm9kdWN0cy9jcmVhdGUiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1760781350);
+	('U7cSmT92s0XalMLaYM4l46HFDQObULdVvCVaL8G6', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicUVGZEVHM1VEN1Npdmp2Y1NEVGczeUlMZTR2bkVmaHJqUWMzV3hKbyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9wcm9kdWN0cyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjI7fQ==', 1760783201);
 
 -- membuang struktur untuk table zynera_v2_db.temp_registrations
 CREATE TABLE IF NOT EXISTS `temp_registrations` (

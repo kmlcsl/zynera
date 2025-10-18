@@ -24,7 +24,8 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
                     <span class="block text-slate-800">Jelajahi Produk</span>
                     <span
-                        class="block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">Minyak Jelantah
+                        class="block bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">Minyak
+                        Jelantah
                         Zynera</span>
                 </h1>
 
@@ -161,61 +162,61 @@
                                 </div>
                             </div>
                         </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-                            <button type="submit"
-                                class="group bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                                <span class="flex items-center justify-center">
-                                    🔍 Cari Produk
-                                    <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
-                                </span>
-                            </button>
-
-                            <a href="{{ route('products.index') }}"
-                                class="group bg-slate-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-600 transition-all duration-300 shadow-md hover:shadow-lg text-center">
-                                <span class="flex items-center justify-center">
-                                    🔄 Reset Filter
-                                    <svg class="ml-2 w-4 h-4 group-hover:rotate-180 transition-transform duration-500"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                                        </path>
-                                    </svg>
-                                </span>
-                            </a>
-                        </div>
-                    </form>
                 </div>
 
-                <!-- Filter Summary (Tampil ketika filter tersembunyi) -->
-                <div id="filterSummary" class="">
-                    <div class="flex flex-wrap items-center gap-2 text-sm">
-                        <span class="text-slate-600 font-medium">Filter aktif:</span>
-                        @if (request('search'))
-                            <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
-                                📝 "{{ request('search') }}"
-                            </span>
-                        @endif
-                        @if (request('category'))
-                            @php
-                                $selectedCategory = $categories->where('slug', request('category'))->first();
-                            @endphp
-                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
-                                🏷️ {{ $selectedCategory->name ?? 'Kategori' }}
-                            </span>
-                        @endif
-                        @if (!request('search') && !request('category'))
-                            <span class="text-slate-500 italic">Tidak ada filter aktif</span>
-                        @endif
-                    </div>
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <button type="submit"
+                        class="group bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <span class="flex items-center justify-center">
+                            🔍 Cari Produk
+                            <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </span>
+                    </button>
+
+                    <a href="{{ route('products.index') }}"
+                        class="group bg-slate-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-600 transition-all duration-300 shadow-md hover:shadow-lg text-center">
+                        <span class="flex items-center justify-center">
+                            🔄 Reset Filter
+                            <svg class="ml-2 w-4 h-4 group-hover:rotate-180 transition-transform duration-500"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                </path>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+                </form>
+            </div>
+
+            <!-- Filter Summary (Tampil ketika filter tersembunyi) -->
+            <div id="filterSummary" class="">
+                <div class="flex flex-wrap items-center gap-2 text-sm">
+                    <span class="text-slate-600 font-medium">Filter aktif:</span>
+                    @if (request('search'))
+                        <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
+                            📝 "{{ request('search') }}"
+                        </span>
+                    @endif
+                    @if (request('category'))
+                        @php
+                            $selectedCategory = $categories->where('slug', request('category'))->first();
+                        @endphp
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                            🏷️ {{ $selectedCategory->name ?? 'Kategori' }}
+                        </span>
+                    @endif
+                    @if (!request('search') && !request('category'))
+                        <span class="text-slate-500 italic">Tidak ada filter aktif</span>
+                    @endif
                 </div>
             </div>
+        </div>
         </div>
     </section>
 
@@ -226,8 +227,9 @@
                 <!-- Results Header -->
                 <div class="flex flex-col md:flex-row justify-between items-center mb-8">
                     <div>
-                        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-2">Produk AgriConnect</h2>
-                        <p class="text-sm sm:text-base text-slate-600 text-center">{{ $products->count() }}/{{ $products->total() }}
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-2">Produk Zynera</h2>
+                        <p class="text-sm sm:text-base text-slate-600 text-center">
+                            {{ $products->count() }}/{{ $products->total() }}
                             produk</p>
                     </div>
                     <div class="flex items-center mt-4 md:mt-0">
@@ -402,7 +404,7 @@
                         </div>
                         <h3 class="text-2xl font-bold text-slate-800 mb-3">Produk Tidak Ditemukan</h3>
                         <p class="text-slate-600 text-base mb-6 leading-relaxed">
-                            Maaf, tidak ada produk yang sesuai dengan kriteria pencarian Anda di AgriConnect.
+                            Maaf, tidak ada produk yang sesuai dengan kriteria pencarian Anda di Zynera.
                             Coba ubah filter atau kata kunci pencarian.
                         </p>
                         <a href="{{ route('products.index') }}"
