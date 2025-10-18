@@ -1,61 +1,216 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🔥 Zynera - Platform Minyak Jelantah
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<div align="center">
+  <h3>Platform Digital untuk Transaksi Minyak Jelantah Berkelanjutan</h3>
+  <p>Memfasilitasi jual beli minyak jelantah dengan sistem yang aman, transparan, dan ramah lingkungan</p>
+</div>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Quick Start untuk Juri/Penguji
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**⚡ PENTING: Akses langsung tanpa instalasi!**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Untuk kemudahan pengujian, gunakan akun yang sudah tersedia:
 
-## Learning Laravel
+### 👥 **AKUN DEMO TERSEDIA**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| **Role** | **Email** | **Password** | **Akses** |
+|----------|-----------|--------------|----------|
+| 👑 **Admin** | `admin@zynera.com` | `password` | Dashboard Admin + Full Control |
+| 🏪 **Penjual** | `penjual@zynera.com` | `password` | Kelola Produk + Dashboard |
+| 🚚 **Kurir** | `kurir@zynera.com` | `password` | Kelola Pengiriman |
+| 🛒 **Pembeli** | `pembeli@zynera.com` | `password` | Berbelanja + Order |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 🔗 **URL Akses:**
+- **Frontend:** `http://localhost/zynera-v2` atau `http://127.0.0.1:8000`
+- **Login:** `http://localhost/zynera-v2/login`
+- **Admin Panel:** `http://localhost/zynera-v2/admin/dashboard`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🎯 Panduan Pengujian
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### **1. 👑 Uji Coba sebagai ADMIN**
+```
+✅ Login: admin@zynera.com / password
+📍 URL: /admin/dashboard
+🔧 Fitur yang bisa diuji:
+   • Dashboard lengkap dengan statistik
+   • Manajemen user (CRUD semua role)
+   • Manajemen produk (approve/reject)
+   • Manajemen pesanan & pembayaran
+   • Laporan keuangan & analytics
+   • Pengaturan sistem
+```
 
-### Premium Partners
+### **2. 🏪 Uji Coba sebagai PENJUAL**
+```
+✅ Login: penjual@zynera.com / password
+📍 URL: /admin/dashboard
+🔧 Fitur yang bisa diuji:
+   • Tambah produk minyak jelantah
+   • Kelola inventory & stok
+   • Monitor pesanan masuk
+   • Lihat laporan penjualan
+   • Update status pesanan
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### **3. 🚚 Uji Coba sebagai KURIR**
+```
+✅ Login: kurir@zynera.com / password
+📍 URL: /admin/dashboard
+🔧 Fitur yang bisa diuji:
+   • Lihat daftar pengiriman
+   • Update status delivery
+   • Rute pengiriman
+   • Riwayat pengantaran
+```
 
-## Contributing
+### **4. 🛒 Uji Coba sebagai PEMBELI**
+```
+✅ Login: pembeli@zynera.com / password
+📍 URL: / (homepage)
+🔧 Fitur yang bisa diuji:
+   • Browse & cari produk
+   • Tambah ke keranjang
+   • Proses checkout
+   • Pilih metode pembayaran
+   • Track pesanan
+   • Beri review produk
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 💡 Fitur Utama Aplikasi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 🌟 **Untuk Pembeli:**
+- 🔍 Pencarian produk minyak jelantah
+- 🛒 Keranjang belanja yang responsif
+- 💳 Multiple payment gateway (Midtrans, Transfer Bank)
+- 📦 Tracking pesanan real-time
+- ⭐ Sistem review & rating produk
+- 📱 Interface mobile-friendly
 
-## Security Vulnerabilities
+### 🌟 **Untuk Penjual:**
+- 📝 Manajemen produk (CRUD)
+- 📊 Dashboard analytics penjualan
+- 📦 Kelola stok inventory
+- 💰 Laporan keuangan
+- 🏠 Input alamat asal produk untuk pickup
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 🌟 **Untuk Kurir:**
+- 🚚 Daftar pengiriman
+- 📍 Update status delivery
+- 🗺️ Manajemen rute
 
-## License
+### 🌟 **Untuk Admin:**
+- 👥 User management (semua role)
+- 📈 Dashboard analytics menyeluruh
+- 🛡️ Sistem keamanan & permissions
+- 📊 Laporan komprehensif
+- ⚙️ Konfigurasi sistem
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🔧 Tech Stack
+
+- **Backend:** Laravel 10+ (PHP 8.4)
+- **Frontend:** Blade Templates + TailwindCSS + Alpine.js
+- **Database:** MySQL/MariaDB
+- **Payment:** Midtrans Integration
+- **Email:** SMTP (Mailtrap untuk development)
+- **Authentication:** Laravel Breeze + Google OAuth
+- **File Storage:** Laravel Storage (public disk)
+
+---
+
+## 📋 Instalasi (Jika Diperlukan)
+
+### Prerequisites:
+- PHP 8.4+
+- Composer
+- Node.js & NPM
+- MySQL/MariaDB
+
+### Langkah Instalasi:
+```bash
+# 1. Clone repository
+git clone [repository-url]
+cd zynera-v2
+
+# 2. Install dependencies
+composer install
+npm install && npm run build
+
+# 3. Environment setup
+cp .env.example .env
+php artisan key:generate
+
+# 4. Database setup
+php artisan migrate
+php artisan db:seed
+
+# 5. Storage link
+php artisan storage:link
+
+# 6. Start server
+php artisan serve
+```
+
+---
+
+## 📚 Flow Pengujian yang Disarankan
+
+### **Skenario 1: Complete E-commerce Flow**
+1. **Admin** → Buat kategori produk baru
+2. **Penjual** → Tambah produk dengan alamat asal
+3. **Pembeli** → Browse, add to cart, checkout
+4. **Admin** → Approve pesanan
+5. **Kurir** → Update status pengiriman
+6. **Pembeli** → Berikan review
+
+### **Skenario 2: Payment Integration**
+1. **Pembeli** → Lakukan pemesanan
+2. Pilih metode pembayaran (Midtrans/Transfer)
+3. Simulasi pembayaran berhasil
+4. Cek update status otomatis
+
+### **Skenario 3: Admin Management**
+1. **Admin** → Kelola user (tambah/edit/hapus)
+2. Monitor dashboard analytics
+3. Generate laporan keuangan
+4. Atur permissions user
+
+---
+
+## 🔐 Keamanan
+
+- ✅ CSRF Protection
+- ✅ XSS Protection  
+- ✅ SQL Injection Prevention
+- ✅ Authentication & Authorization
+- ✅ Rate Limiting
+- ✅ Input Validation
+- ✅ File Upload Security
+
+---
+
+## 📞 Support
+
+Untuk pertanyaan teknis atau bantuan pengujian:
+- 📧 Email: [developer-email]
+- 📱 WhatsApp: [phone-number]
+
+---
+
+## 📄 License
+
+Project ini menggunakan [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+<div align="center">
+  <p><strong>🌱 Zynera - Mendukung Ekonomi Sirkular Berkelanjutan</strong></p>
+  <p><em>Mengubah minyak jelantah menjadi peluang bisnis yang menguntungkan</em></p>
+</div>
